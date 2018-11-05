@@ -355,7 +355,7 @@ void loop() {
 
 		tilt.activate();
 
-		//dumbass player lost ball, continue with next player or game over
+		//dumbass player lost ball; continue with next player or game over
 		if (sw_ballChute.triggered()) {
 			game.lostBall();
 			ballChute.activate();
