@@ -32,11 +32,6 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>Pinball</name>
-			<type>2</type>
-			<location>/home/dennis/Arduino/Pinball</location>
-		</link>
-		<link>
 			<name>core/core</name>
 			<type>2</type>
 			<locationURI>ECLIPSE_HOME/arduinoPlugin/packages/arduino/hardware/avr/1.6.20/cores/arduino</locationURI>
@@ -55,6 +50,11 @@
 			<name>libraries/DFRobotDFPlayerMini-1.0.3</name>
 			<type>2</type>
 			<location>/home/dennis/Arduino/libraries/DFRobotDFPlayerMini-1.0.3</location>
+		</link>
+		<link>
+			<name>libraries/MCP23S17</name>
+			<type>2</type>
+			<location>/home/dennis/Arduino/libraries/MCP23S17</location>
 		</link>
 		<link>
 			<name>libraries/SPI</name>

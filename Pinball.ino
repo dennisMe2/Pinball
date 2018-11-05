@@ -185,9 +185,9 @@ void setup() {
 	driverBank.addSolenoid(&kickerBottomRight, 4);
 	driverBank.addSolenoid(&kickOutLeft, 5);
 	driverBank.addSolenoid(&kickOutRight, 6);
-	driverBank.addSolenoid(&postDown, 7);
+	driverBank.addSolenoid(&postUp, 7);
 	//Port B
-	driverBank.addSolenoid(&postUp, 8);
+	driverBank.addSolenoid(&postDown, 8);
 	driverBank.addSolenoid(&replayGate, 9);
 	driverBank.addSolenoid(&ballChute, 10);
 	driverBank.addSolenoid(&spare, 11);
@@ -255,7 +255,7 @@ void setup() {
 	Serial.println(F("End Of Boot phase"));
 }
 
-bool testMode = true;
+bool testMode = false;
 uint8_t testCounter = 0;
 unsigned int nextActivationTime = 0;
 
@@ -369,6 +369,11 @@ void loop() {
 		}
 
 		if (sw_targetA.triggered() || sw_targetB.triggered()) {
+			postUp.activate();
+			game.addScore(10);
+		}
+
+		if (sw_targetPostUpLeft.triggered() || sw_targetPostUpRight.triggered()) {
 			postUp.activate();
 			game.addScore(10);
 		}

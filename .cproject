@@ -58,6 +58,8 @@
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/DFRobotDFPlayerMini-1.0.3}&quot;"/>
                                     									
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/TM1637}&quot;"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/MCP23S17}&quot;"/>
                                     								
                                 </option>
                                 								
@@ -88,6 +90,8 @@
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/DFRobotDFPlayerMini-1.0.3}&quot;"/>
                                     									
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/TM1637}&quot;"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/MCP23S17}&quot;"/>
                                     								
                                 </option>
                                 								
@@ -118,6 +122,8 @@
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/DFRobotDFPlayerMini-1.0.3}&quot;"/>
                                     									
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/TM1637}&quot;"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/MCP23S17}&quot;"/>
                                     								
                                 </option>
                                 								
