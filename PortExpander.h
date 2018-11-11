@@ -9,6 +9,7 @@
 #define PORTEXPANDER_H_
 #include "MCP23S17.h"
 #include <SPI.h>
+#include "Display.h"
 
 #include "PortUser.h"
 
@@ -17,6 +18,7 @@ public:
 	void refreshOutputs();
 	void refreshInputs();
 	void resetTriggers();
+	void showPinsOn7Segment(Display* disp);
 	void addSolenoid( PortUser* portUser, unsigned char number);
 	void addSwitch( PortUser* portUser, unsigned char number);
 	PortExpander(SPIClass *spi, unsigned char chipSelect, unsigned char address);

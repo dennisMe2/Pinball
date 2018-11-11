@@ -20,7 +20,6 @@ public:
 	virtual void setStatus(uint8_t stat);
 
 private:
-	uint8_t spikeFilter = 2;
 	unsigned int nextChangeTime = 0;
 	uint8_t debounceDelay = 33; // ms
 	bool activeLow:1;

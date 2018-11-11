@@ -9,11 +9,16 @@
 #include "MCP23S17.h"
 #include <SPI.h>
 #include <Arduino.h>
+#include "Display.h"
 
 PortExpander::PortExpander(SPIClass* spi, unsigned char chipSelect,
 		unsigned char address) :
 		MCP23S17(spi, chipSelect, address) {
+
 	MCP23S17::begin();
+	for (uint8_t i = 0; i < 16; i++) {
+		MCP23S17::pinMode(i, INPUT_PULLUP);//prevent floating inputs
+	}
 	//all the magic happens in the base class
 }
 
@@ -53,6 +58,38 @@ void PortExpander::refreshInputs() {
 			portUsers[i]->setStatus((portStatus >> i) & 0B0000000000000001);
 		}
 	}
+
+}
+
+void PortExpander::showPinsOn7Segment(Display* disp){
+
+	uint8_t SEG_DISP[4] = {0,0,0,0};
+
+	if(MCP23S17::digitalRead(0)) SEG_DISP[0] |= SEG_F;
+	if(MCP23S17::digitalRead(1)) SEG_DISP[0] |= SEG_B;
+
+	if(MCP23S17::digitalRead(2)) SEG_DISP[1] |= SEG_F;
+	if(MCP23S17::digitalRead(3)) SEG_DISP[1] |= SEG_B;
+
+	if(MCP23S17::digitalRead(4)) SEG_DISP[2] |= SEG_F;
+	if(MCP23S17::digitalRead(5)) SEG_DISP[2] |= SEG_B;
+
+	if(MCP23S17::digitalRead(6)) SEG_DISP[3] |= SEG_F;
+	if(MCP23S17::digitalRead(7)) SEG_DISP[3] |= SEG_B;
+
+	if(MCP23S17::digitalRead(8)) SEG_DISP[0] |= SEG_E;
+	if(MCP23S17::digitalRead(9)) SEG_DISP[0] |= SEG_C;
+
+	if(MCP23S17::digitalRead(10)) SEG_DISP[1] |= SEG_E;
+	if(MCP23S17::digitalRead(11)) SEG_DISP[1] |= SEG_C;
+
+	if(MCP23S17::digitalRead(12)) SEG_DISP[2] |= SEG_E;
+	if(MCP23S17::digitalRead(13)) SEG_DISP[2] |= SEG_C;
+
+	if(MCP23S17::digitalRead(14)) SEG_DISP[3] |= SEG_E;
+	if(MCP23S17::digitalRead(15)) SEG_DISP[3] |= SEG_C;
+
+	disp->setSegments(SEG_DISP);
 
 }
 

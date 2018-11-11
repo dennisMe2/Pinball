@@ -234,7 +234,6 @@ void setup() {
 
 	strip.begin();
 	strip.setBrightness(255);
-	// https://www.tweaking4all.nl/hardware/arduino/arduino-ws2812-led/
 	strip.show();
 
 	if (!mP3.begin(softSerial)) {  //Use softwareSerial to communicate with mp3.
@@ -256,15 +255,29 @@ void setup() {
 }
 
 bool testMode = false;
+int testModeCounter =0;
+
 uint8_t testCounter = 0;
 unsigned int nextActivationTime = 0;
+
+bool isTestModeRequested(bool testMode) {
+	if (!sw_coinIn.getStatus()) {
+		if (++testModeCounter > 2000) {
+			testMode = !testMode;
+			testModeCounter = 0;
+		}
+	} else {
+		testModeCounter = 0;
+	}
+	return testMode;
+}
 
 void loop() {
 	loopTime = intMillis();
 
+	testMode = isTestModeRequested(testMode);
+
 	if(testMode && (loopTime > nextActivationTime)){
-
-
 		switch (testCounter){
 		case 0:
 			kickOutTop.activateDelayed();
@@ -451,8 +464,13 @@ void loop() {
 		nextLedUpdate = loopTime + ledUpdateDelay;
 	}
 
-	dispScore.refreshDisplay();
-	dispGame.refreshDisplay();
+	if(!testMode){
+		dispScore.refreshDisplay();
+		dispGame.refreshDisplay();
+	} else{
+		switchBank1.showPinsOn7Segment(&dispGame);
+		switchBank2.showPinsOn7Segment(&dispScore);
+	}
 
 	switchBank1.resetTriggers();
 	switchBank2.resetTriggers();

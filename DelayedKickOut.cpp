@@ -17,8 +17,7 @@ DelayedKickOut::DelayedKickOut(unsigned int delayMaxMs) : Solenoid() {
 
 
 void DelayedKickOut::activate(){
-	activationStart = intMillis() + random(500,maxDelay);
-	//activationStart = intMillis() + 1000;
+	activationStart = intMillis() + random(500, maxDelay);
 }
 
 void DelayedKickOut::activateDelayed(){
