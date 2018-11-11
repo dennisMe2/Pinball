@@ -12,7 +12,6 @@
 #include "Switch.h"
 #include "Game.h"
 #include "Player.h"
-#include "utils.h"
 
 #define LED_PIN 6
 
@@ -35,7 +34,7 @@
 #define CSportExpander 10
 
 uint8_t litPixel = 0;
-unsigned int loopTime = 0;
+unsigned long loopTime = 0;
 
 SoftwareSerial softSerial(7, 8); // arduino RX, TX
 DFRobotDFPlayerMini mP3;
@@ -51,7 +50,7 @@ Player player4 = Player();
 
 Game game = Game(3, &player1, &player2, &player3, &player4);
 
-unsigned int nextLedUpdate = 0;
+unsigned long nextLedUpdate = 0;
 uint8_t ledUpdateDelay = 100;
 
 PortExpander driverBank = PortExpander(&SPI, CSportExpander, 0);
@@ -258,7 +257,7 @@ bool testMode = false;
 int testModeCounter =0;
 
 uint8_t testCounter = 0;
-unsigned int nextActivationTime = 0;
+unsigned long nextActivationTime = 0;
 
 bool isTestModeRequested(bool testMode) {
 	if (!sw_coinIn.getStatus()) {
@@ -273,7 +272,7 @@ bool isTestModeRequested(bool testMode) {
 }
 
 void loop() {
-	loopTime = intMillis();
+	loopTime = millis();
 
 	testMode = isTestModeRequested(testMode);
 

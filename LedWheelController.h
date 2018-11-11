@@ -19,7 +19,7 @@ public:
 private:
 	SmartLed* leds[10];
 	uint8_t currentLed = 0;
-	unsigned int nextTime = 0;
+	unsigned long nextTime = 0;
 	unsigned int animationDelay = 3000;
 };
 

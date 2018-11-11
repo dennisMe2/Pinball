@@ -21,7 +21,6 @@
 #include "Arduino.h"
 #include "Game.h"
 #include <TM1637Display.h>
-#include "utils.h"
 
 class Display : public TM1637Display {
 	//
@@ -94,7 +93,7 @@ public:
 
 	void setGame(Game* gamePtr);
 	uint8_t function = INSERT_COIN;
-	unsigned int nextSegmentTime = intMillis();
+	unsigned long nextSegmentTime = millis();
 	uint8_t nextSegmentIndex = 0;
 	unsigned int period = 1000;
 	unsigned int refresh = 500; //10Hz refresh rate

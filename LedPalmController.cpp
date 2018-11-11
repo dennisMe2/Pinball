@@ -6,7 +6,6 @@
  */
 
 #include "LedPalmController.h"
-#include "utils.h"
 
 LedPalmController::LedPalmController() {
 	ledsOff();
@@ -22,7 +21,7 @@ void LedPalmController::addLed(SmartLed* led, int index, uint8_t multiplier) {
 	multipliers[index] = multiplier;
 }
 void LedPalmController::animate() {
-	if(intMillis() > nextTime){
+	if(millis() > nextTime){
 		if (currentLed > 4) {
 			ledsOff();
 			currentLed = 0;
@@ -30,7 +29,7 @@ void LedPalmController::animate() {
 			leds[currentLed]->normal();
 			currentLed++;
 		}
-		nextTime = intMillis() + animationDelay;
+		nextTime = millis() + animationDelay;
 	}
 
 }

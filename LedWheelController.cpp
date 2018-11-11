@@ -6,7 +6,6 @@
  */
 
 #include "LedWheelController.h"
-#include "utils.h"
 
 LedWheelController::LedWheelController() {
 	// TODO Auto-generated constructor stub
@@ -16,10 +15,10 @@ void LedWheelController::addLed(SmartLed* led, int index){
 	leds[index] = led;
 }
 void LedWheelController::animate(){
-	if(intMillis() > nextTime){
+	if(millis() > nextTime){
 		leds[currentLed]->off();
 		if(++currentLed > 9) currentLed = 0;
 		leds[currentLed]->normal();
-		nextTime = intMillis() + animationDelay;
+		nextTime = millis() + animationDelay;
 	}
 }

@@ -6,7 +6,6 @@
  */
 
 #include "Switch.h"
-#include "utils.h"
 
 Switch::Switch() : PortUser() {
 	activeLow = true;
@@ -32,9 +31,9 @@ bool Switch::on(){
 }
 
 void Switch::setStatus(uint8_t stat){
-	if( intMillis() > nextChangeTime && stat != previousStatus ){
+	if( millis() > nextChangeTime && stat != previousStatus ){
 		PortUser::setStatus(stat);
-		nextChangeTime = intMillis() + debounceDelay;
+		nextChangeTime = millis() + debounceDelay;
 		previousStatus = stat;
 		//trigger only on rising/falling edges
 		if(activeLow && (stat == LOW)) trig = true;

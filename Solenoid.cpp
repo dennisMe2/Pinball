@@ -7,7 +7,6 @@
 
 #include "Solenoid.h"
 #include "PortUser.h"
-#include "utils.h"
 
 
 Solenoid::Solenoid() : PortUser(){
@@ -25,7 +24,7 @@ void Solenoid::activate(){
 	if (maxOnTime == 0){
 		deactivateAfter = 0;
 	} else{
-		deactivateAfter = intMillis() + maxOnTime;
+		deactivateAfter = millis() + maxOnTime;
 	}
 }
 
@@ -38,5 +37,5 @@ bool Solenoid::isExpired(){
 	if(0 == deactivateAfter){
 		return false;
 	}
-	return (intMillis() > deactivateAfter);
+	return (millis() > deactivateAfter);
 }
