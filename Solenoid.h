@@ -18,7 +18,7 @@ public:
 	virtual ~Solenoid(){};
 
 	uint8_t maxOnTime = 20; //milliseconds
-	unsigned long deactivateAfter = 0;
+	unsigned int deactivateAfter = 0;
 	virtual void activate();
 	virtual void deactivate();
 	virtual bool isExpired();

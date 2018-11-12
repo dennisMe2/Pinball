@@ -18,7 +18,7 @@ public:
 	virtual void checkDelayedActivation();
 	void activateDelayed();
 private:
-	unsigned long activationStart = 0;
+	unsigned int activationStart = 0;
 	unsigned int maxDelay = 2000;
 
 };

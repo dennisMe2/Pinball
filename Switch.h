@@ -20,7 +20,7 @@ public:
 	virtual void setStatus(uint8_t stat);
 
 private:
-	unsigned long nextChangeTime = 0;
+	unsigned int nextChangeTime = 0;
 	uint8_t debounceDelay = 33; // ms
 	bool activeLow:1;
 	bool trig:1;

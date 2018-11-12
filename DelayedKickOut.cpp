@@ -6,6 +6,7 @@
  */
 
 #include "DelayedKickOut.h"
+#include "Utils.h"
 
 DelayedKickOut::DelayedKickOut() : Solenoid() {
 
@@ -16,7 +17,7 @@ DelayedKickOut::DelayedKickOut(unsigned int delayMaxMs) : Solenoid() {
 
 
 void DelayedKickOut::activate(){
-	activationStart = millis() + random(500, maxDelay);
+	activationStart = intMillis() + random(500, maxDelay);
 }
 
 void DelayedKickOut::activateDelayed(){
@@ -25,7 +26,7 @@ void DelayedKickOut::activateDelayed(){
 }
 
  void DelayedKickOut::checkDelayedActivation(){
-	 if((activationStart != 0) && (millis() >= activationStart)){
+	 if((activationStart != 0) && ((signed int)(intMillis() - activationStart) > 0)){
 		 activateDelayed();
 	 }
  };

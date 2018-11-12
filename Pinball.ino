@@ -4,6 +4,7 @@
 #include "DFRobotDFPlayerMini.h"
 #include "Display.h"
 #include "SmartLed.h"
+#include "DumbLed.h"
 #include "LedWheelController.h"
 #include "LedPalmController.h"
 #include "PortExpander.h"
@@ -22,7 +23,7 @@
 #define CYAN 0,255,255
 #define BLUE 0,0,255
 #define MAGENTA 255,0,255
-#define WHITE 255,255,255
+#define WHITE 255,250,250
 #define BLACK 0,0,0
 #define GREY 127,127,127
 
@@ -63,27 +64,27 @@ NEO_RGB + NEO_KHZ800);
 LedWheelController wheel = LedWheelController();
 LedPalmController palm = LedPalmController();
 
-SmartLed rollover_100 = SmartLed(&strip, 0, RED);
-SmartLed b = SmartLed(&strip, 1);
-SmartLed islandRight = SmartLed(&strip, 2);
-SmartLed topRightSideUpper = SmartLed(&strip, 3);
-SmartLed topRightSideLower = SmartLed(&strip, 4);
-SmartLed topRightKicker = SmartLed(&strip, 5);
-SmartLed rightSideUpper = SmartLed(&strip, 6);
-SmartLed bottomRightKicker = SmartLed(&strip, 7);
+DumbLed rollover_100 = DumbLed(&strip, 0);
+DumbLed b = DumbLed(&strip, 1);
+DumbLed islandRight = DumbLed(&strip, 2);
+DumbLed topRightSideUpper = DumbLed(&strip, 3);
+DumbLed topRightSideLower = DumbLed(&strip, 4);
+DumbLed topRightKicker = DumbLed(&strip, 5);
+DumbLed rightSideUpper = DumbLed(&strip, 6);
+DumbLed bottomRightKicker = DumbLed(&strip, 7);
 SmartLed palmTree1 = SmartLed(&strip, 8, GREEN);
 SmartLed palmTree2 = SmartLed(&strip, 9, GREEN);
 SmartLed palmTree3 = SmartLed(&strip, 10, GREEN);
 SmartLed palmTree4 = SmartLed(&strip, 11, YELLOW);
 SmartLed palmTree10x = SmartLed(&strip, 12, RED);
-SmartLed a = SmartLed(&strip, 13);
-SmartLed islandLeft = SmartLed(&strip, 14);
-SmartLed topLeftSideUpper = SmartLed(&strip, 15);
-SmartLed topLeftSideLower = SmartLed(&strip, 16);
-SmartLed topLeftKicker = SmartLed(&strip, 17);
-SmartLed bottomLeftKicker = SmartLed(&strip, 18);
-SmartLed leftSideUpper = SmartLed(&strip, 19);
-SmartLed leftSideLower = SmartLed(&strip, 20);
+DumbLed a = DumbLed(&strip, 13);
+DumbLed islandLeft = DumbLed(&strip, 14);
+DumbLed topLeftSideUpper = DumbLed(&strip, 15);
+DumbLed topLeftSideLower = DumbLed(&strip, 16);
+DumbLed topLeftKicker = DumbLed(&strip, 17);
+DumbLed bottomLeftKicker = DumbLed(&strip, 18);
+DumbLed leftSideUpper = DumbLed(&strip, 19);
+DumbLed leftSideLower = DumbLed(&strip, 20);
 
 SmartLed wheelNorth = SmartLed(&strip, 21, BLUE);
 SmartLed wheelCenter = SmartLed(&strip, 22, BLUE);
@@ -97,18 +98,18 @@ SmartLed wheelESE = SmartLed(&strip, 29, BLUE);
 SmartLed wheelENE = SmartLed(&strip, 30, BLUE);
 SmartLed wheelNNE = SmartLed(&strip, 31, BLUE);
 
-SmartLed rightSideLower = SmartLed(&strip, 32);
-SmartLed rightKickerUpper = SmartLed(&strip, 33);
+DumbLed rightSideLower = DumbLed(&strip, 32);
+DumbLed rightKickerUpper = DumbLed(&strip, 33);
 SmartLed red = SmartLed(&strip, 34, RED);
 SmartLed blue = SmartLed(&strip, 35, BLUE);
 SmartLed green = SmartLed(&strip, 36, GREEN);
 SmartLed yellow = SmartLed(&strip, 37, YELLOW);
-SmartLed leftSideKickerUpper = SmartLed(&strip, 38);
-SmartLed leftSideKickerLower = SmartLed(&strip, 39);
-SmartLed samePlayerShoots = SmartLed(&strip, 40, RED);
-SmartLed rightKickerLower = SmartLed(&strip, 41);
-SmartLed postUpper = SmartLed(&strip, 42, RED);
-SmartLed postLower = SmartLed(&strip, 43, RED);
+DumbLed leftSideKickerUpper = DumbLed(&strip, 38);
+DumbLed leftSideKickerLower = DumbLed(&strip, 39);
+DumbLed samePlayerShoots = DumbLed(&strip, 40);
+DumbLed rightKickerLower = DumbLed(&strip, 41);
+DumbLed postUpper = DumbLed(&strip, 42);
+DumbLed postLower = DumbLed(&strip, 43);
 
 Switch sw_rollOver_100 = Switch();
 Switch sw_rollOverA = Switch();
@@ -260,7 +261,7 @@ uint8_t testCounter = 0;
 unsigned long nextActivationTime = 0;
 
 bool isTestModeRequested(bool testMode) {
-	if (!sw_coinIn.getStatus()) {
+	if (!sw_coinIn.getStatus()) {//switch pushed
 		if (++testModeCounter > 2000) {
 			testMode = !testMode;
 			testModeCounter = 0;
