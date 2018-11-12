@@ -14,7 +14,7 @@ Solenoid::Solenoid() : PortUser(){
 	PortUser::setStatus(LOW);
 }
 
-Solenoid::Solenoid(unsigned int tMaxOn){
+Solenoid::Solenoid(uint8_t tMaxOn) : PortUser(){
 	PortUser::setStatus(LOW);
 	maxOnTime = tMaxOn;
 }
@@ -35,7 +35,9 @@ void Solenoid::deactivate(){
 }
 
 bool Solenoid::isExpired(){
-	if(0 == deactivateAfter){
+	if(this->getStatus() == LOW) return true;//for tilt
+
+	if(0 == maxOnTime || 0 == deactivateAfter){
 		return false;
 	}
 	return ((signed int)(intMillis() - deactivateAfter ) > 0);

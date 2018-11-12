@@ -26,13 +26,13 @@ void Display::showPlayer() {
 	setFunction(SHOW_PLAYER);
 }
 void Display::showPlayerUp() {
-	setFunction(PLAYER_UP);
+	setFunction(SHOW_PLAYER_UP);
 }
 void Display::showNumPlayers() {
 	setFunction(SHOW_NUM_PLAYERS);
 }
 void Display::showGameOver() {
-	setFunction(GAME_OVER);
+	setFunction(SHOW_GAME_OVER);
 }
 
 void Display::showHighScore() {
@@ -91,7 +91,7 @@ void Display::refreshDisplay() {
 		TM1637Display::setSegments(SEG_PLAY);
 		nextSegmentTime = millis() + refresh;
 		break;
-	case PLAYER_UP:
+	case SHOW_PLAYER_UP:
 
 			TM1637Display::setSegments(SEG_PLAYER_UP_A, 1,0);
 			TM1637Display::showNumberDec(gamePointer->getActivePlayer() + 1, false, 1, 1);

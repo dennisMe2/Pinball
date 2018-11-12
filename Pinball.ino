@@ -13,19 +13,10 @@
 #include "Switch.h"
 #include "Game.h"
 #include "Player.h"
+#include "Utils.h"
+#include "DumbLedController.h"
 
 #define LED_PIN 6
-
-//primary & complementary color wheel:
-#define RED 255,0,0
-#define YELLOW 255,255,0
-#define GREEN 0,255,0
-#define CYAN 0,255,255
-#define BLUE 0,0,255
-#define MAGENTA 255,0,255
-#define WHITE 255,250,250
-#define BLACK 0,0,0
-#define GREY 127,127,127
 
 #define CLK1 2
 #define DIO1 3
@@ -63,28 +54,29 @@ NEO_RGB + NEO_KHZ800);
 
 LedWheelController wheel = LedWheelController();
 LedPalmController palm = LedPalmController();
+DumbLedController dumbLeds = DumbLedController();
 
-DumbLed rollover_100 = DumbLed(&strip, 0);
-DumbLed b = DumbLed(&strip, 1);
-DumbLed islandRight = DumbLed(&strip, 2);
-DumbLed topRightSideUpper = DumbLed(&strip, 3);
-DumbLed topRightSideLower = DumbLed(&strip, 4);
-DumbLed topRightKicker = DumbLed(&strip, 5);
-DumbLed rightSideUpper = DumbLed(&strip, 6);
-DumbLed bottomRightKicker = DumbLed(&strip, 7);
+DumbLed rollover_100 = DumbLed(&strip, 0, WHITE);
+DumbLed b = DumbLed(&strip, 1, WHITE);
+DumbLed islandRight = DumbLed(&strip, 2, WHITE);
+DumbLed topRightSideUpper = DumbLed(&strip, 3, WHITE);
+DumbLed topRightSideLower = DumbLed(&strip, 4, WHITE);
+DumbLed topRightKicker = DumbLed(&strip, 5, WHITE);
+DumbLed rightSideUpper = DumbLed(&strip, 6, WHITE);
+DumbLed bottomRightKicker = DumbLed(&strip, 7, WHITE);
 SmartLed palmTree1 = SmartLed(&strip, 8, GREEN);
 SmartLed palmTree2 = SmartLed(&strip, 9, GREEN);
 SmartLed palmTree3 = SmartLed(&strip, 10, GREEN);
 SmartLed palmTree4 = SmartLed(&strip, 11, YELLOW);
 SmartLed palmTree10x = SmartLed(&strip, 12, RED);
-DumbLed a = DumbLed(&strip, 13);
-DumbLed islandLeft = DumbLed(&strip, 14);
-DumbLed topLeftSideUpper = DumbLed(&strip, 15);
-DumbLed topLeftSideLower = DumbLed(&strip, 16);
-DumbLed topLeftKicker = DumbLed(&strip, 17);
-DumbLed bottomLeftKicker = DumbLed(&strip, 18);
-DumbLed leftSideUpper = DumbLed(&strip, 19);
-DumbLed leftSideLower = DumbLed(&strip, 20);
+DumbLed a = DumbLed(&strip, 13, WHITE);
+DumbLed islandLeft = DumbLed(&strip, 14, WHITE);
+DumbLed topLeftSideUpper = DumbLed(&strip, 15, WHITE);
+DumbLed topLeftSideLower = DumbLed(&strip, 16, WHITE);
+DumbLed topLeftKicker = DumbLed(&strip, 17, WHITE);
+DumbLed bottomLeftKicker = DumbLed(&strip, 18, WHITE);
+DumbLed leftSideUpper = DumbLed(&strip, 19, WHITE);
+DumbLed leftSideLower = DumbLed(&strip, 20, WHITE);
 
 SmartLed wheelNorth = SmartLed(&strip, 21, BLUE);
 SmartLed wheelCenter = SmartLed(&strip, 22, BLUE);
@@ -98,18 +90,18 @@ SmartLed wheelESE = SmartLed(&strip, 29, BLUE);
 SmartLed wheelENE = SmartLed(&strip, 30, BLUE);
 SmartLed wheelNNE = SmartLed(&strip, 31, BLUE);
 
-DumbLed rightSideLower = DumbLed(&strip, 32);
-DumbLed rightKickerUpper = DumbLed(&strip, 33);
+DumbLed rightSideLower = DumbLed(&strip, 32, WHITE);
+DumbLed rightKickerUpper = DumbLed(&strip, 33, WHITE);
 SmartLed red = SmartLed(&strip, 34, RED);
 SmartLed blue = SmartLed(&strip, 35, BLUE);
 SmartLed green = SmartLed(&strip, 36, GREEN);
 SmartLed yellow = SmartLed(&strip, 37, YELLOW);
-DumbLed leftSideKickerUpper = DumbLed(&strip, 38);
-DumbLed leftSideKickerLower = DumbLed(&strip, 39);
-DumbLed samePlayerShoots = DumbLed(&strip, 40);
-DumbLed rightKickerLower = DumbLed(&strip, 41);
-DumbLed postUpper = DumbLed(&strip, 42);
-DumbLed postLower = DumbLed(&strip, 43);
+DumbLed leftSideKickerUpper = DumbLed(&strip, 38, WHITE);
+DumbLed leftSideKickerLower = DumbLed(&strip, 39, WHITE);
+DumbLed samePlayerShoots = DumbLed(&strip, 40, WHITE);
+DumbLed rightKickerLower = DumbLed(&strip, 41, WHITE);
+DumbLed postUpper = DumbLed(&strip, 42, WHITE);
+DumbLed postLower = DumbLed(&strip, 43, WHITE);
 
 Switch sw_rollOver_100 = Switch();
 Switch sw_rollOverA = Switch();
@@ -141,7 +133,6 @@ Switch sw_ballRelease = Switch();
 Switch sw_ballChute = Switch();
 Switch sw_coinIn = Switch();
 
-
 DelayedKickOut kickOutTop = DelayedKickOut(3500);
 Solenoid kickerTopLeft = Solenoid();
 Solenoid kickerTopRight = Solenoid();
@@ -151,7 +142,7 @@ DelayedKickOut kickOutLeft = DelayedKickOut(7000);
 DelayedKickOut kickOutRight = DelayedKickOut(7000);
 Solenoid postUp = Solenoid();
 Solenoid postDown = Solenoid();
-Solenoid replayGate = Solenoid(1000);
+Solenoid replayGate = Solenoid(255);
 Solenoid ballChute = Solenoid();
 Solenoid spare = Solenoid();
 Solenoid tilt = Solenoid(0); // normally on!
@@ -159,6 +150,23 @@ Solenoid tilt = Solenoid(0); // normally on!
 void setup() {
 	Serial.begin(9600);
 	randomSeed(analogRead(0));
+
+	dumbLeds.addLed(&islandRight);
+	dumbLeds.addLed(&topRightSideUpper);
+	dumbLeds.addLed(&topRightSideLower);
+	dumbLeds.addLed(&rightSideUpper);
+	dumbLeds.addLed(&islandLeft);
+	dumbLeds.addLed(&topLeftSideUpper);
+	dumbLeds.addLed(&topLeftSideLower);
+	dumbLeds.addLed(&leftSideUpper);
+	dumbLeds.addLed(&leftSideLower);
+	dumbLeds.addLed(&rightSideLower);
+	dumbLeds.addLed(&rightKickerUpper);
+	dumbLeds.addLed(&leftSideKickerUpper);
+	dumbLeds.addLed(&leftSideKickerLower);
+	dumbLeds.addLed(&rightKickerLower);
+
+
 
 	wheel.addLed(&wheelNNW, 0);
 	wheel.addLed(&wheelWNW, 1);
@@ -250,18 +258,18 @@ void setup() {
 	dispGame.setBrightness(0x02);
 	dispGame.setGame(&game);
 
-	tilt.deactivate();
+	tilt.activate();
 	Serial.println(F("End Of Boot phase"));
 }
 
 bool testMode = false;
-int testModeCounter =0;
+int testModeCounter = 0;
 
 uint8_t testCounter = 0;
 unsigned long nextActivationTime = 0;
 
 bool isTestModeRequested(bool testMode) {
-	if (!sw_coinIn.getStatus()) {//switch pushed
+	if (!sw_coinIn.getStatus()) {  //switch pushed
 		if (++testModeCounter > 2000) {
 			testMode = !testMode;
 			testModeCounter = 0;
@@ -275,7 +283,6 @@ bool isTestModeRequested(bool testMode) {
 void addPlayer() {
 	game.addPlayer();
 	mP3.play(3);
-	ballChute.activate();
 }
 
 void loop() {
@@ -287,9 +294,9 @@ void loop() {
 	switchBank1.refreshInputs();
 	switchBank2.refreshInputs();
 
-	if(testMode ){
-		if(loopTime > nextActivationTime){
-			switch (testCounter){
+	if (testMode) {
+		if (loopTime > nextActivationTime) {
+			switch (testCounter) {
 			case 0:
 				kickOutTop.activateDelayed();
 				break;
@@ -300,78 +307,91 @@ void loop() {
 				kickerTopRight.activate();
 				break;
 			case 3:
-					kickerBottomLeft.activate();
-					break;
+				kickerBottomLeft.activate();
+				break;
 			case 4:
-					kickerBottomRight.activate();
-					break;
+				kickerBottomRight.activate();
+				break;
 			case 5:
 				kickOutLeft.activateDelayed();
-					break;
+				break;
 			case 6:
 				kickOutRight.activateDelayed();
-					break;
-			case 7://the port pin firing order is switched here so you can see if the mechanicals are in order
-					postUp.activate();
-					break;
-			case 8://the port pin firing order is switched here so you can see if the mechanicals are in order
+				break;
+			case 7: //the port pin firing order is switched here so you can see if the mechanicals are in order
+				postUp.activate();
+				break;
+			case 8: //the port pin firing order is switched here so you can see if the mechanicals are in order
 					//Port B
-					postDown.activate();
-					break;
+				postDown.activate();
+				break;
 			case 9:
-					replayGate.activate();
-					break;
+				replayGate.activate();
+				break;
 			case 10:
 				ballChute.activate();
-					break;
+				break;
 			case 11:
-					spare.activate();
-					break;
-			case 12://you may want to hold a flipper for this one!
-					tilt.activate();
-					break;
+				spare.activate();
+				break;
+			case 12:			//you may want to hold a flipper for this one!
+				tilt.activate();
+				break;
 			}
 		}
-		if(++testCounter > 12) testCounter = 0;
+		if (++testCounter > 12)
+			testCounter = 0;
 
 		nextActivationTime = loopTime + 1000;
 	} else if (game.getState() == GAME_OVER) {
+		dumbLeds.changeColors(BLUE);
+
 		palm.setDelay(300); //fast animation
 		wheel.setDelay(150);
-
-		if(game.getNumPlayers() == 0){
-			dispGame.showInsertCoin();
-			dispScore.showInsertCoin();
-		}
-
 		tilt.deactivate();
+
+		dispGame.showInsertCoin();
+		dispScore.showInsertCoin();
+
 		//adding a coin adds a player; max = 4 once a game starts no players can be added
 		if (sw_coinIn.triggered()) {
+			ballChute.activate();
 			game.setState(COIN_IN);
 			addPlayer();
 		}
 
-	} else if(game.getState() == COIN_IN){
+	} else if (game.getState() == COIN_IN) {
+		dumbLeds.changeColors(YELLOW);
+
 		if (sw_coinIn.triggered()) {
 			addPlayer();
 		}
 		//Shooting a ball immediately starts player 1's game with however many players were added
-		if ( sw_ballRelease.triggered()) {
-			game.setState(PLAYER_UP);
-			dispGame.showPlayer();
+		if (sw_ballRelease.triggered()) {
+			game.setState(FIRST_PLAYER_UP);
 		}
 
 		dispGame.showPlayer();
 		dispScore.showNumPlayers();
 
-	} else if (game.getState() == PLAYER_UP){//transient state, automatically moves to PLAYER_PLAYING
-		//delay while player takes the controls
+	} else if (game.getState() == FIRST_PLAYER_UP) {
+		game.setState(PLAYER_PLAYING);
+
+	} else if (game.getState() == PLAYER_UP) {
+		tilt.deactivate();
+		dumbLeds.changeColors(GREEN);
 		dispGame.showPlayer();
 		dispScore.showPlayer();
 
-	}else if(game.getState() == PLAYER_PLAYING){ //GAME ON!
+		if (sw_coinIn.triggered()) {
+			ballChute.activate();
+			game.setState(PLAYER_PLAYING);
+		}
+
+	} else if (game.getState() == PLAYER_PLAYING) { //GAME ON!
 		palm.setDelay(15000); //slower animation
 		wheel.setDelay(5000);
+		dumbLeds.changeColors(WHITE);
 
 		dispGame.showPlayerUp();
 		dispScore.showScore();
@@ -381,17 +401,7 @@ void loop() {
 		//player lost ball; continue with next player or game over
 		if (sw_ballChute.triggered()) {
 			game.lostBall();
-			if(!game.getState() == GAME_OVER) {
-				ballChute.activate();
-			}
-		}
 
-		//someone banged the board, big trouble!
-		if (sw_tilt.triggered()) {
-			game.setState(TILT);
-			postDown.activate();
-			tilt.deactivate();
-			mP3.play(2);
 		}
 
 		if (sw_targetA.triggered() || sw_targetB.triggered()) {
@@ -399,7 +409,8 @@ void loop() {
 			game.addScore(10);
 		}
 
-		if (sw_targetPostUpLeft.triggered() || sw_targetPostUpRight.triggered()) {
+		if (sw_targetPostUpLeft.triggered()
+				|| sw_targetPostUpRight.triggered()) {
 			postUp.activate();
 			game.addScore(10);
 		}
@@ -463,24 +474,31 @@ void loop() {
 		//Set games score multiplier depending on the lit LEDs
 		game.setMultiplier(palm.getMultiplier());
 
-	} else if (game.getState() == TILT){
+		//someone banged the board, big trouble!
+		if (sw_tilt.triggered()) {
+			game.setState(TILT);
+			postDown.activate();
+			mP3.play(2);
+		}
+
+	} else if (game.getState() == TILT) {
+		tilt.deactivate();
+		dumbLeds.changeColors(RED);
+
 		if (sw_ballChute.triggered()) {
 			game.lostBall();
-			if(!game.getState() == GAME_OVER) {
-				ballChute.activate();
-			}
 		}
 
 		//important ball doesn't end up hanging in a kickout forever
-		if (sw_kickOutTop.triggered()  ) {
+		if (sw_kickOutTop.triggered()) {
 			kickOutTop.activateDelayed();
 		}
 
-		if (sw_kickOutLeft.triggered()  ) {
+		if (sw_kickOutLeft.triggered()) {
 			kickOutLeft.activateDelayed();
 		}
 
-		if (sw_kickOutRight.triggered()  ) {
+		if (sw_kickOutRight.triggered()) {
 			kickOutRight.activateDelayed();
 		}
 
@@ -493,15 +511,15 @@ void loop() {
 	driverBank.refreshOutputs();
 
 	//don't update the LEDs too quickly to save precious milliseconds
-	if(loopTime > nextLedUpdate ){
+	if (loopTime > nextLedUpdate) {
 		strip.show();	//Duration  = 1.3 ms!
 		nextLedUpdate = loopTime + ledUpdateDelay;
 	}
 
-	if(!testMode){
+	if (!testMode) {
 		dispScore.refreshDisplay();
 		dispGame.refreshDisplay();
-	} else{
+	} else {
 		switchBank1.showPinsOn7Segment(&dispGame);
 		switchBank2.showPinsOn7Segment(&dispScore);
 	}

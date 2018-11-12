@@ -10,10 +10,11 @@
 
 #define GAME_OVER 0
 #define COIN_IN 1
-#define PLAYER_UP 2
-#define PLAYER_PLAYING 3
-#define TILT 4
-#define PLAYER_LOST_BALL 5
+#define FIRST_PLAYER_UP 2
+#define PLAYER_UP 3
+#define PLAYER_PLAYING 4
+#define TILT 5
+#define PLAYER_LOST_BALL 6
 
 #include <Arduino.h>
 #include "Player.h"
@@ -30,8 +31,6 @@ public:
 	void setState(uint8_t newState);
 	uint8_t getState();
 	bool addPlayer();
-	unsigned int startOfDelay = 0;
-	unsigned int delayTime = 5000;
 	unsigned int getNumPlayers();
 	unsigned int getActivePlayer(){return activePlayer;};
 	void setMultiplier(uint8_t multi);

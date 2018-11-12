@@ -9,7 +9,7 @@
 #define LEDPALMCONTROLLER_H_
 
 #include "SmartLed.h"
-
+#include <Arduino.h>
 class LedPalmController {
 public:
 	LedPalmController();

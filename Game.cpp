@@ -25,7 +25,7 @@ uint8_t Game::getState(){
 }
 
 void Game::setState(uint8_t newState){
-	if(newState == PLAYER_UP){
+	if(newState == PLAYER_UP || newState == FIRST_PLAYER_UP){
 		if (state == COIN_IN) {
 			for(int i=0; i<4; i++){
 				players[i]->ballsLeft = ballCount;
@@ -36,23 +36,13 @@ void Game::setState(uint8_t newState){
 			activePlayer = 0;
 			multiplier = 1;
 		}
-		startOfDelay = intMillis();
-		state = PLAYER_UP;
 	}
-	if(newState == TILT){
-
-	}
+	state = newState;
 
 }
 
 void Game::update(){
 
-	if(state == PLAYER_UP){
-		if(intMillis() - startOfDelay > delayTime){
-			startOfDelay = 0;
-			state = PLAYER_PLAYING;
-		}
-	}
 }
 
 void Game::addScore(uint8_t points) {
@@ -103,9 +93,9 @@ void Game::lostBall() {
 	if(players[activePlayer]->gameIsOver){
 		state = GAME_OVER;
 		numberOfPlayers = 0;
+	}else{
+		state = PLAYER_UP;
 	}
-	state = PLAYER_UP;
-
 }
 
 

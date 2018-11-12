@@ -14,7 +14,7 @@
 class Solenoid: public PortUser {
 public:
 	Solenoid();
-	Solenoid(unsigned int tMaxOn);
+	Solenoid(uint8_t tMaxOn);
 	virtual ~Solenoid(){};
 
 	uint8_t maxOnTime = 20; //milliseconds

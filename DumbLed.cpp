@@ -8,16 +8,17 @@
 #include "Arduino.h"
 #include "DumbLed.h"
 #include <Adafruit_NeoPixel.h>
+#include "Utils.h"
 
 //cons
-DumbLed::DumbLed(Adafruit_NeoPixel* strip, unsigned char pos) {
+DumbLed::DumbLed(Adafruit_NeoPixel* strip, unsigned char pos, uint8_t r, uint8_t g, uint8_t b) {
 	stripPos = pos;
 	myStrip = strip;
-	normal();
+	setColor(r,g,b);
 }
 
-void DumbLed::normal() {
-	myStrip->setPixelColor(stripPos, 255, 245, 245);
+void DumbLed::setColor(uint8_t r, uint8_t g, uint8_t b) {
+	myStrip->setPixelColor(stripPos, r, g, b);
 }
 void DumbLed::off() {
 	myStrip->setPixelColor(stripPos, 0, 0, 0);

@@ -5,6 +5,7 @@
  *      Author: dennis
  */
 #include <Arduino.h>
+#include "Utils.h"
 
 	unsigned int intMillis(){
 		return (unsigned int) millis();
