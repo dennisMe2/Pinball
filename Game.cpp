@@ -6,6 +6,7 @@
  */
 
 #include "Game.h"
+#include "Utils.h"
 
 Game::Game(int ballC, Player* player1, Player* player2, Player* player3, Player* player4) {
 	ballCount = ballC;
@@ -15,26 +16,43 @@ Game::Game(int ballC, Player* player1, Player* player2, Player* player3, Player*
 	players[3] = player4;
 }
 
-bool Game::isGameOver() {
-	return gameIsOver;
-}
-
 void Game::setMultiplier(uint8_t multi) {
 	multiplier = multi;
 }
 
-void Game::playBall() {
-	if (gameIsOver) {
-		for(int i=0; i<4; i++){
-			players[i]->ballsLeft = ballCount;
-			players[i]->gameIsOver = false;
-			players[i]->score = 0;
-			players[i]->bonusBalls = 0;
+uint8_t Game::getState(){
+	return state;
+}
+
+void Game::setState(uint8_t newState){
+	if(newState == PLAYER_UP){
+		if (state == COIN_IN) {
+			for(int i=0; i<4; i++){
+				players[i]->ballsLeft = ballCount;
+				players[i]->gameIsOver = false;
+				players[i]->score = 0;
+				players[i]->bonusBalls = 0;
+			}
+			activePlayer = 0;
+			multiplier = 1;
 		}
-		activePlayer = 0;
-		multiplier = 1;
+		startOfDelay = intMillis();
+		state = PLAYER_UP;
 	}
-	gameIsOver = false;
+	if(newState == TILT){
+
+	}
+
+}
+
+void Game::update(){
+
+	if(state == PLAYER_UP){
+		if(intMillis() - startOfDelay > delayTime){
+			startOfDelay = 0;
+			state = PLAYER_PLAYING;
+		}
+	}
 }
 
 void Game::addScore(uint8_t points) {
@@ -83,16 +101,17 @@ void Game::lostBall() {
 
 	//if we were unable to find any player with balls, declare the game over
 	if(players[activePlayer]->gameIsOver){
-		gameIsOver = true;
+		state = GAME_OVER;
 		numberOfPlayers = 0;
 	}
-
+	state = PLAYER_UP;
 
 }
 
 
-
 bool Game::addPlayer(){
+	state = COIN_IN;
+
 	if(numberOfPlayers < 4) {
 		numberOfPlayers++;
 		return true;

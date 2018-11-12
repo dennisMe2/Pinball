@@ -17,7 +17,7 @@ DumbLed::DumbLed(Adafruit_NeoPixel* strip, unsigned char pos) {
 }
 
 void DumbLed::normal() {
-	myStrip->setPixelColor(stripPos, 255, 250, 250);
+	myStrip->setPixelColor(stripPos, 255, 245, 245);
 }
 void DumbLed::off() {
 	myStrip->setPixelColor(stripPos, 0, 0, 0);

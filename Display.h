@@ -8,14 +8,14 @@
 #ifndef DISPLAY_H_
 #define DISPLAY_H_
 #define SEG_DP  0b10000000
-#define INSERT_COIN 0
+#define SHOW_INSERT_COIN 0
 #define SHOW_SCORE 1
-#define GAME_OVER 2
-#define HIGH_SCORE 3
-#define PLAYER 4
-#define NUM_PLAYERS 5
-#define PLAYER_UP 6
-#define SWITCHES 7
+#define SHOW_GAME_OVER 2
+#define SHOW_HIGH_SCORE 3
+#define SHOW_PLAYER 4
+#define SHOW_NUM_PLAYERS 5
+#define SHOW_PLAYER_UP 6
+#define SHOW_SWITCHES 7
 
 
 #include "Arduino.h"
@@ -92,7 +92,7 @@ public:
 	void showSwitches(unsigned int switches);
 
 	void setGame(Game* gamePtr);
-	uint8_t function = INSERT_COIN;
+	uint8_t function = SHOW_INSERT_COIN;
 	unsigned long nextSegmentTime = millis();
 	uint8_t nextSegmentIndex = 0;
 	unsigned int period = 1000;

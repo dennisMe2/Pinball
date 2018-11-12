@@ -152,7 +152,7 @@ DelayedKickOut kickOutRight = DelayedKickOut(7000);
 Solenoid postUp = Solenoid();
 Solenoid postDown = Solenoid();
 Solenoid replayGate = Solenoid(1000);
-DelayedKickOut ballChute = DelayedKickOut(3000);
+Solenoid ballChute = Solenoid();
 Solenoid spare = Solenoid();
 Solenoid tilt = Solenoid(0); // normally on!
 
@@ -272,66 +272,70 @@ bool isTestModeRequested(bool testMode) {
 	return testMode;
 }
 
+void addPlayer() {
+	game.addPlayer();
+	mP3.play(3);
+	ballChute.activate();
+}
+
 void loop() {
 	loopTime = millis();
 
 	testMode = isTestModeRequested(testMode);
 
-	if(testMode && (loopTime > nextActivationTime)){
-		switch (testCounter){
-		case 0:
-			kickOutTop.activateDelayed();
-			break;
-		case 1:
-			kickerTopLeft.activate();
-			break;
-		case 2:
-			kickerTopRight.activate();
-			break;
-		case 3:
-				kickerBottomLeft.activate();
-				break;
-		case 4:
-				kickerBottomRight.activate();
-				break;
-		case 5:
-			kickOutLeft.activateDelayed();
-				break;
-		case 6:
-			kickOutRight.activateDelayed();
-				break;
-		case 7://the port pin firing order is switched here so you can see if the mechanicals are in order
-				postUp.activate();
-				break;
-		case 8://the port pin firing order is switched here so you can see if the mechanicals are in order
-				//Port B
-				postDown.activate();
-				break;
-		case 9:
-				replayGate.activate();
-				break;
-		case 10:
-			ballChute.activateDelayed();
-				break;
-		case 11:
-				spare.activate();
-				break;
-		case 12://you may want to hold a flipper for this one!
-				tilt.activate();
-				break;
-		}
-
-		if(++testCounter > 12) testCounter = 0;
-
-		nextActivationTime = loopTime + 1000;
-	}
-
 	//start by getting the latest switch input values
 	switchBank1.refreshInputs();
 	switchBank2.refreshInputs();
 
-	//Game over behavior, add players, start game, advertise etc
-	if (!testMode && game.isGameOver()) {
+	if(testMode ){
+		if(loopTime > nextActivationTime){
+			switch (testCounter){
+			case 0:
+				kickOutTop.activateDelayed();
+				break;
+			case 1:
+				kickerTopLeft.activate();
+				break;
+			case 2:
+				kickerTopRight.activate();
+				break;
+			case 3:
+					kickerBottomLeft.activate();
+					break;
+			case 4:
+					kickerBottomRight.activate();
+					break;
+			case 5:
+				kickOutLeft.activateDelayed();
+					break;
+			case 6:
+				kickOutRight.activateDelayed();
+					break;
+			case 7://the port pin firing order is switched here so you can see if the mechanicals are in order
+					postUp.activate();
+					break;
+			case 8://the port pin firing order is switched here so you can see if the mechanicals are in order
+					//Port B
+					postDown.activate();
+					break;
+			case 9:
+					replayGate.activate();
+					break;
+			case 10:
+				ballChute.activate();
+					break;
+			case 11:
+					spare.activate();
+					break;
+			case 12://you may want to hold a flipper for this one!
+					tilt.activate();
+					break;
+			}
+		}
+		if(++testCounter > 12) testCounter = 0;
+
+		nextActivationTime = loopTime + 1000;
+	} else if (game.getState() == GAME_OVER) {
 		palm.setDelay(300); //fast animation
 		wheel.setDelay(150);
 
@@ -343,42 +347,51 @@ void loop() {
 		tilt.deactivate();
 		//adding a coin adds a player; max = 4 once a game starts no players can be added
 		if (sw_coinIn.triggered()) {
-			game.addPlayer();
-			dispGame.showPlayer();
-			dispScore.showNumPlayers();
-			ballChute.activate();
+			game.setState(COIN_IN);
+			addPlayer();
 		}
 
+	} else if(game.getState() == COIN_IN){
+		if (sw_coinIn.triggered()) {
+			addPlayer();
+		}
 		//Shooting a ball immediately starts player 1's game with however many players were added
-		if ((game.getNumPlayers() > 0) && (sw_ballRelease.triggered() )) {
-
-			game.playBall();
+		if ( sw_ballRelease.triggered()) {
+			game.setState(PLAYER_UP);
 			dispGame.showPlayer();
 		}
 
-		//might want to randomly make some noise too!
-		//   or maybe not...
+		dispGame.showPlayer();
+		dispScore.showNumPlayers();
 
-	} else if(! testMode){ //GAME ON!
-		palm.setDelay(1500); //slower animation
-		wheel.setDelay(2500);
+	} else if (game.getState() == PLAYER_UP){//transient state, automatically moves to PLAYER_PLAYING
+		//delay while player takes the controls
+		dispGame.showPlayer();
+		dispScore.showPlayer();
+
+	}else if(game.getState() == PLAYER_PLAYING){ //GAME ON!
+		palm.setDelay(15000); //slower animation
+		wheel.setDelay(5000);
 
 		dispGame.showPlayerUp();
 		dispScore.showScore();
 
 		tilt.activate();
 
-		//dumbass player lost ball; continue with next player or game over
+		//player lost ball; continue with next player or game over
 		if (sw_ballChute.triggered()) {
 			game.lostBall();
-			ballChute.activate();
+			if(!game.getState() == GAME_OVER) {
+				ballChute.activate();
+			}
 		}
 
 		//someone banged the board, big trouble!
 		if (sw_tilt.triggered()) {
+			game.setState(TILT);
 			postDown.activate();
 			tilt.deactivate();
-			mP3.play(1);
+			mP3.play(2);
 		}
 
 		if (sw_targetA.triggered() || sw_targetB.triggered()) {
@@ -450,6 +463,27 @@ void loop() {
 		//Set games score multiplier depending on the lit LEDs
 		game.setMultiplier(palm.getMultiplier());
 
+	} else if (game.getState() == TILT){
+		if (sw_ballChute.triggered()) {
+			game.lostBall();
+			if(!game.getState() == GAME_OVER) {
+				ballChute.activate();
+			}
+		}
+
+		//important ball doesn't end up hanging in a kickout forever
+		if (sw_kickOutTop.triggered()  ) {
+			kickOutTop.activateDelayed();
+		}
+
+		if (sw_kickOutLeft.triggered()  ) {
+			kickOutLeft.activateDelayed();
+		}
+
+		if (sw_kickOutRight.triggered()  ) {
+			kickOutRight.activateDelayed();
+		}
+
 	}
 
 	palm.animate();
@@ -474,4 +508,6 @@ void loop() {
 
 	switchBank1.resetTriggers();
 	switchBank2.resetTriggers();
+
+	game.update();
 }
