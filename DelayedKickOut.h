@@ -9,6 +9,7 @@
 #define DELAYEDKICKOUT_H_
 
 #include "Solenoid.h"
+#include "LedWheelController.h"
 
 class DelayedKickOut: public Solenoid {
 public:
@@ -17,9 +18,11 @@ public:
 	virtual void activate();
 	virtual void checkDelayedActivation();
 	void activateDelayed();
+	void setWheelController(LedWheelController* wheelController);
 private:
 	unsigned int activationStart = 0;
 	unsigned int maxDelay = 2000;
+	LedWheelController* wheel = 0;
 
 };
 

@@ -16,7 +16,7 @@ SmartLed::SmartLed(Adafruit_NeoPixel* strip, unsigned char pos) {
 	stdColorG = 255;
 	stdColorB = 255;
 	myStrip = strip;
-	normal();
+	on();
 }
 
 SmartLed::SmartLed(Adafruit_NeoPixel* strip, unsigned char pos,
@@ -26,12 +26,12 @@ SmartLed::SmartLed(Adafruit_NeoPixel* strip, unsigned char pos,
 	stdColorG = stdG;
 	stdColorB = stdB;
 	myStrip = strip;
-	normal();
+	on();
 }
 
 // Member Functions()
 
-void SmartLed::normal() {
+void SmartLed::on() {
 	myStrip->setPixelColor(stripPos, stdColorR, stdColorG, stdColorB);
 }
 void SmartLed::off() {

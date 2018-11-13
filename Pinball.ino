@@ -15,6 +15,7 @@
 #include "Player.h"
 #include "Utils.h"
 #include "DumbLedController.h"
+#include "BoatController.h"
 
 #define LED_PIN 6
 
@@ -52,7 +53,7 @@ PortExpander switchBank2 = PortExpander(&SPI, CSportExpander, 3);
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(44, LED_PIN,
 NEO_RGB + NEO_KHZ800);
 
-LedWheelController wheel = LedWheelController();
+
 LedPalmController palm = LedPalmController();
 DumbLedController dumbLeds = DumbLedController();
 
@@ -78,24 +79,24 @@ DumbLed bottomLeftKicker = DumbLed(&strip, 18, WHITE);
 DumbLed leftSideUpper = DumbLed(&strip, 19, WHITE);
 DumbLed leftSideLower = DumbLed(&strip, 20, WHITE);
 
-SmartLed wheelNorth = SmartLed(&strip, 21, BLUE);
-SmartLed wheelCenter = SmartLed(&strip, 22, BLUE);
-SmartLed wheelNNW = SmartLed(&strip, 23, BLUE);
-SmartLed wheelWNW = SmartLed(&strip, 24, BLUE);
+SmartLed wheelNorth = SmartLed(&strip, 21, RED);
+SmartLed wheelCenter = SmartLed(&strip, 22, WHITE);
+SmartLed wheelNNW = SmartLed(&strip, 23, YELLOW);
+SmartLed wheelWNW = SmartLed(&strip, 24, GREEN);
 SmartLed wheelWSW = SmartLed(&strip, 25, BLUE);
-SmartLed wheelSSW = SmartLed(&strip, 26, BLUE);
-SmartLed wheelSouth = SmartLed(&strip, 27, BLUE);
-SmartLed wheelSSE = SmartLed(&strip, 28, BLUE);
+SmartLed wheelSSW = SmartLed(&strip, 26, RED);
+SmartLed wheelSouth = SmartLed(&strip, 27, YELLOW);
+SmartLed wheelSSE = SmartLed(&strip, 28, GREEN);
 SmartLed wheelESE = SmartLed(&strip, 29, BLUE);
-SmartLed wheelENE = SmartLed(&strip, 30, BLUE);
-SmartLed wheelNNE = SmartLed(&strip, 31, BLUE);
+SmartLed wheelENE = SmartLed(&strip, 30, RED);
+SmartLed wheelNNE = SmartLed(&strip, 31, YELLOW);
 
 DumbLed rightSideLower = DumbLed(&strip, 32, WHITE);
 DumbLed rightKickerUpper = DumbLed(&strip, 33, WHITE);
-SmartLed red = SmartLed(&strip, 34, RED);
-SmartLed blue = SmartLed(&strip, 35, BLUE);
-SmartLed green = SmartLed(&strip, 36, GREEN);
-SmartLed yellow = SmartLed(&strip, 37, YELLOW);
+DumbLed red = DumbLed(&strip, 37, RED);
+DumbLed blue = DumbLed(&strip, 36, BLUE);
+DumbLed green = DumbLed(&strip, 35, GREEN);
+DumbLed yellow = DumbLed(&strip, 34, YELLOW);
 DumbLed leftSideKickerUpper = DumbLed(&strip, 38, WHITE);
 DumbLed leftSideKickerLower = DumbLed(&strip, 39, WHITE);
 DumbLed samePlayerShoots = DumbLed(&strip, 40, WHITE);
@@ -147,6 +148,9 @@ Solenoid ballChute = Solenoid();
 Solenoid spare = Solenoid();
 Solenoid tilt = Solenoid(0); // normally on!
 
+BoatController boat = BoatController(&yellow, &green, &blue, &red);
+LedWheelController wheel = LedWheelController(&boat);
+
 void setup() {
 	Serial.begin(9600);
 	randomSeed(analogRead(0));
@@ -166,18 +170,18 @@ void setup() {
 	dumbLeds.addLed(&leftSideKickerLower);
 	dumbLeds.addLed(&rightKickerLower);
 
+	wheel.addLed(&wheelNorth, 0);
+	wheel.addLed(&wheelNNW, 1);
+	wheel.addLed(&wheelWNW, 2);
+	wheel.addLed(&wheelWSW, 3);
+	wheel.addLed(&wheelSSW, 4);
+	wheel.addLed(&wheelSouth, 5);
+	wheel.addLed(&wheelSSE, 6);
+	wheel.addLed(&wheelESE, 7);
+	wheel.addLed(&wheelENE, 8);
+	wheel.addLed(&wheelNNE, 9);
 
 
-	wheel.addLed(&wheelNNW, 0);
-	wheel.addLed(&wheelWNW, 1);
-	wheel.addLed(&wheelWSW, 2);
-	wheel.addLed(&wheelSSW, 3);
-	wheel.addLed(&wheelSouth, 4);
-	wheel.addLed(&wheelSSE, 5);
-	wheel.addLed(&wheelESE, 6);
-	wheel.addLed(&wheelENE, 7);
-	wheel.addLed(&wheelNNE, 8);
-	wheel.addLed(&wheelNorth, 9);
 
 	palm.addLed(&palmTree1, 0, 1);
 	palm.addLed(&palmTree2, 1, 2);
@@ -237,6 +241,9 @@ void setup() {
 	switchBank2.addSwitch(&sw_ballChute, 10);
 	switchBank2.addSwitch(&sw_coinIn, 11);
 	switchBank2.begin();
+
+	kickOutLeft.setWheelController(&wheel);
+	kickOutRight.setWheelController(&wheel);
 
 	softSerial.begin(9600);
 
@@ -389,8 +396,8 @@ void loop() {
 		}
 
 	} else if (game.getState() == PLAYER_PLAYING) { //GAME ON!
-		palm.setDelay(15000); //slower animation
-		wheel.setDelay(5000);
+		//palm.setDelay(15000); //slower animation
+		wheel.setDelay(1500);
 		dumbLeds.changeColors(WHITE);
 
 		dispGame.showPlayerUp();

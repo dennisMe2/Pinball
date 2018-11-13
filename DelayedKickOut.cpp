@@ -15,14 +15,19 @@ DelayedKickOut::DelayedKickOut(unsigned int delayMaxMs) : Solenoid() {
 	maxDelay = delayMaxMs;
 }
 
+void DelayedKickOut::setWheelController(LedWheelController* wheelController){
+	wheel = wheelController;
+}
 
 void DelayedKickOut::activate(){
 	activationStart = intMillis() + random(500, maxDelay);
+	if(wheel !=0) wheel->pause();
 }
 
 void DelayedKickOut::activateDelayed(){
 	activationStart = 0;
 	Solenoid::activate();
+	if(wheel !=0) wheel->unPause();
 }
 
  void DelayedKickOut::checkDelayedActivation(){

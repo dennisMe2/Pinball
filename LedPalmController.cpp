@@ -26,7 +26,7 @@ void LedPalmController::animate() {
 			ledsOff();
 			currentLed = 0;
 		} else {
-			leds[currentLed]->normal();
+			leds[currentLed]->on();
 			currentLed++;
 		}
 		nextTime = millis() + animationDelay;

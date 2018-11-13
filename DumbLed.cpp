@@ -20,7 +20,3 @@ DumbLed::DumbLed(Adafruit_NeoPixel* strip, unsigned char pos, uint8_t r, uint8_t
 void DumbLed::setColor(uint8_t r, uint8_t g, uint8_t b) {
 	myStrip->setPixelColor(stripPos, r, g, b);
 }
-void DumbLed::off() {
-	myStrip->setPixelColor(stripPos, 0, 0, 0);
-}
-

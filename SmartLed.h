@@ -23,7 +23,7 @@ public:
 	SmartLed(Adafruit_NeoPixel* strip, unsigned char pos, unsigned char stdR,
 			unsigned char stdG, unsigned char stdB);
 
-	void normal();
+	void on();
 	void off();
 
 };
