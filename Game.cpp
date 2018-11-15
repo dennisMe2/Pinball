@@ -14,6 +14,7 @@ Game::Game(int ballC, Player* player1, Player* player2, Player* player3, Player*
 	players[1] = player2;
 	players[2] = player3;
 	players[3] = player4;
+	resetReplay();
 }
 
 void Game::setMultiplier(uint8_t multi) {
@@ -77,8 +78,19 @@ unsigned int Game::getNumPlayers(){
 	return numberOfPlayers;
 }
 
+void Game::setReplay(){
+	replay = true;
+}
 void Game::lostBall() {
 	uint8_t startPlayerIndex = activePlayer;
+
+	if (replay && (! replayUsed))
+	{
+		replay = false;
+		state = PLAY_AGAIN;
+		replayUsed = true;
+		return;
+	}
 
 	players[activePlayer]->ballsLeft--; //subtract ball from active player
 
@@ -95,6 +107,7 @@ void Game::lostBall() {
 		numberOfPlayers = 0;
 	}else{
 		state = PLAYER_UP;
+		resetReplay();
 	}
 }
 
@@ -108,5 +121,14 @@ bool Game::addPlayer(){
 	}else{
 		return false;
 	}
+}
+bool Game::getReplay(){
+	return replay;
+}
+
+//private
+void Game::resetReplay(){
+	replay = false;
+	replayUsed = false;
 }
 

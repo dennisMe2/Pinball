@@ -15,6 +15,8 @@
 #define PLAYER_PLAYING 4
 #define TILT 5
 #define PLAYER_LOST_BALL 6
+#define PLAY_AGAIN 7
+
 
 #include <Arduino.h>
 #include "Player.h"
@@ -28,6 +30,8 @@ public:
 	unsigned char getBalls();
 	void lostBall();
 	void update();
+	void setReplay();
+	boolean getReplay();
 	void setState(uint8_t newState);
 	uint8_t getState();
 	bool addPlayer();
@@ -41,6 +45,9 @@ private:
 	uint8_t activePlayer = 0;
 	uint8_t numberOfPlayers = 0;
 	Player* players[4];
+	bool replay:1;
+	bool replayUsed:1;
+	void resetReplay();
 };
 
 #endif /* GAME_H_ */

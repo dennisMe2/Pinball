@@ -15,12 +15,14 @@
 
 #include "SmartLed.h"
 #include "BoatController.h"
+#include "Game.h"
 
 class LedWheelController {
 public:
 	LedWheelController(BoatController* boatie);
 	void addLed(SmartLed* led, int index);
 	void addLed10(SmartLed* led);
+	void setGame(Game* game);
 	void animate();
 	void pause();
 	void unPause();
@@ -35,6 +37,7 @@ private:
 	unsigned int animationDelay = 1500;
 	bool isPaused = false;
 	BoatController* boat;
+	Game* game =0;
 };
 
 #endif /* LEDWHEELCONTROLLER_H_ */

@@ -18,6 +18,9 @@ void LedWheelController::addLed10(SmartLed* led){
 	led10x = led;
 	led10x->off();
 }
+void LedWheelController::setGame(Game* game){
+	this->game = game;
+}
 
 void LedWheelController::pause(){
 	isPaused = true;
@@ -39,6 +42,10 @@ void LedWheelController::pause(){
 
 	if(boat->areAllOn()){
 		led10x->on();
+		game->setMultiplier(10);
+		if(currentLed == 0){
+			game->setReplay();
+		}
 	}
 
 }

@@ -43,8 +43,6 @@
                                     									
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/core/variant}&quot;"/>
                                     									
-                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/Pinball}&quot;"/>
-                                    									
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/SPI}&quot;"/>
                                     									
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/SPI/src}&quot;"/>
@@ -75,8 +73,6 @@
                                     									
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/core/variant}&quot;"/>
                                     									
-                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/Pinball}&quot;"/>
-                                    									
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/SPI}&quot;"/>
                                     									
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/SPI/src}&quot;"/>
@@ -106,8 +102,6 @@
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/core/core}&quot;"/>
                                     									
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/core/variant}&quot;"/>
-                                    									
-                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/Pinball}&quot;"/>
                                     									
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/SPI}&quot;"/>
                                     									

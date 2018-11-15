@@ -16,6 +16,7 @@
 #include "Utils.h"
 #include "DumbLedController.h"
 #include "BoatController.h"
+#include "ABController.h"
 
 #define LED_PIN 6
 
@@ -57,7 +58,7 @@ NEO_RGB + NEO_KHZ800);
 LedPalmController palm = LedPalmController();
 DumbLedController dumbLeds = DumbLedController();
 
-DumbLed rollover_100 = DumbLed(&strip, 0, WHITE);
+DumbLed rollover_100 = DumbLed(&strip, 0, RED);
 DumbLed b = DumbLed(&strip, 1, WHITE);
 DumbLed islandRight = DumbLed(&strip, 2, WHITE);
 DumbLed topRightSideUpper = DumbLed(&strip, 3, WHITE);
@@ -150,6 +151,7 @@ Solenoid tilt = Solenoid(0); // normally on!
 
 BoatController boat = BoatController(&yellow, &green, &blue, &red);
 LedWheelController wheel = LedWheelController(&boat);
+ABController abController = ABController(&a, &b, &topLeftKicker, &topRightKicker, &bottomLeftKicker, &bottomRightKicker);
 
 void setup() {
 	Serial.begin(9600);
@@ -181,7 +183,8 @@ void setup() {
 	wheel.addLed(&wheelENE, 8);
 	wheel.addLed(&wheelNNE, 9);
 
-
+	wheel.addLed10(&wheelCenter);
+	wheel.setGame(&game);
 
 	palm.addLed(&palmTree1, 0, 1);
 	palm.addLed(&palmTree2, 1, 2);
@@ -384,6 +387,10 @@ void loop() {
 	} else if (game.getState() == FIRST_PLAYER_UP) {
 		game.setState(PLAYER_PLAYING);
 
+	} else if (game.getState() == PLAY_AGAIN) {
+		ballChute.activate();
+		game.setState(PLAYER_PLAYING);
+
 	} else if (game.getState() == PLAYER_UP) {
 		tilt.deactivate();
 		dumbLeds.changeColors(GREEN);
@@ -403,15 +410,33 @@ void loop() {
 		dispGame.showPlayerUp();
 		dispScore.showScore();
 
+		if (game.getReplay()){
+			samePlayerShoots.setColor(RED);
+		}else{
+			samePlayerShoots.setColor(BLACK);
+		}
+
 		tilt.activate();
 
 		//player lost ball; continue with next player or game over
 		if (sw_ballChute.triggered()) {
 			game.lostBall();
-
 		}
 
-		if (sw_targetA.triggered() || sw_targetB.triggered()) {
+		if(sw_rollOverA.triggered()){
+			abController.setA();
+		}
+
+		if(sw_rollOverB.triggered()){
+			abController.setB();
+		}
+
+		if (sw_targetA.triggered() ) {
+			postUp.activate();
+			game.addScore(10);
+		}
+
+		if (sw_targetB.triggered() ) {
 			postUp.activate();
 			game.addScore(10);
 		}
