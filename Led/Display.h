@@ -7,6 +7,7 @@
 
 #ifndef DISPLAY_H_
 #define DISPLAY_H_
+
 #define SEG_DP  0b10000000
 #define SHOW_INSERT_COIN 0
 #define SHOW_SCORE 1
@@ -19,7 +20,7 @@
 
 
 #include "Arduino.h"
-#include "Game.h"
+#include "../Game/Game.h"
 #include <TM1637Display.h>
 
 class Display : public TM1637Display {

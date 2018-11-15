@@ -13,9 +13,9 @@
 #define WHEEL_B 3
 #define WHEEL_R 4
 
-#include "SmartLed.h"
+#include "../Led/SmartLed.h"
 #include "BoatController.h"
-#include "Game.h"
+#include "../Game/Game.h"
 
 class LedWheelController {
 public:

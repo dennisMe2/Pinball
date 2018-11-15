@@ -6,7 +6,6 @@
  */
 
 #include "Switch.h"
-#include "Utils.h"
 
 Switch::Switch() : PortUser() {
 	activeLow = true;

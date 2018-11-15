@@ -8,8 +8,9 @@
 #ifndef LEDPALMCONTROLLER_H_
 #define LEDPALMCONTROLLER_H_
 
-#include "SmartLed.h"
 #include <Arduino.h>
+
+#include "../Led/SmartLed.h"
 class LedPalmController {
 public:
 	LedPalmController();

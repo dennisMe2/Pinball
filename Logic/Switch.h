@@ -9,6 +9,7 @@
 #define SWITCH_H_
 
 #include "PortUser.h"
+#include "../Utils.h"
 
 class Switch: public PortUser {
 public:

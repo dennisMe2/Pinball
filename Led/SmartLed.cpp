@@ -5,8 +5,9 @@
  *      Author: dennis
  */
 
-#include "Arduino.h"
 #include "SmartLed.h"
+
+#include "Arduino.h"
 #include <Adafruit_NeoPixel.h>
 
 //cons

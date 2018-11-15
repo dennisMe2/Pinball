@@ -5,8 +5,9 @@
  *      Author: dennis
  */
 
-#include "Game.h"
-#include "Utils.h"
+#include "../Game/Game.h"
+
+#include "../Utils.h"
 
 Game::Game(int ballC, Player* player1, Player* player2, Player* player3, Player* player4) {
 	ballCount = ballC;

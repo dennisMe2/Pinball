@@ -5,10 +5,11 @@
  *      Author: dennis
  */
 
-#include "Arduino.h"
 #include "DumbLed.h"
+
+#include "Arduino.h"
 #include <Adafruit_NeoPixel.h>
-#include "Utils.h"
+#include "../Utils.h"
 
 //cons
 DumbLed::DumbLed(Adafruit_NeoPixel* strip, unsigned char pos, uint8_t r, uint8_t g, uint8_t b) {

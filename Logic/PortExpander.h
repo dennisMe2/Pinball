@@ -9,8 +9,9 @@
 #define PORTEXPANDER_H_
 #include "MCP23S17.h"
 #include <SPI.h>
-#include "Display.h"
+#include <Arduino.h>
 
+#include "../Led/Display.h"
 #include "PortUser.h"
 
 class PortExpander : public MCP23S17{

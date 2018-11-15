@@ -8,8 +8,8 @@
 #ifndef DELAYEDKICKOUT_H_
 #define DELAYEDKICKOUT_H_
 
+#include "../Controller/LedWheelController.h"
 #include "Solenoid.h"
-#include "LedWheelController.h"
 
 class DelayedKickOut: public Solenoid {
 public:

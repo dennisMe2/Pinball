@@ -7,7 +7,7 @@
 
 #ifndef BOATCONTROLLER_H_
 #define BOATCONTROLLER_H_
-#include "DumbLed.h"
+#include "../Led/DumbLed.h"
 #include <Arduino.h>
 
 class BoatController {

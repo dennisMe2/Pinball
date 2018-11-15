@@ -6,8 +6,9 @@
  */
 
 #include "Solenoid.h"
-#include "PortUser.h"
-#include "Utils.h"
+
+#include "../Logic/PortUser.h"
+#include "../Utils.h"
 
 
 Solenoid::Solenoid() : PortUser(){

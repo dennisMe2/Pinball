@@ -19,7 +19,7 @@
 
 
 #include <Arduino.h>
-#include "Player.h"
+#include "../Game/Player.h"
 
 
 class Game {

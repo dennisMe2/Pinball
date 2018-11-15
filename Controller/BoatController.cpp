@@ -6,7 +6,8 @@
  */
 
 #include "BoatController.h"
-#include "Utils.h"
+
+#include "../Utils.h"
 
 BoatController::BoatController(DumbLed* ledY, DumbLed* ledG, DumbLed* ledB,DumbLed* ledR) {
 	yellow = ledY;

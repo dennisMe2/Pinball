@@ -6,7 +6,8 @@
  */
 
 #include "DelayedKickOut.h"
-#include "Utils.h"
+
+#include "../Utils.h"
 
 DelayedKickOut::DelayedKickOut() : Solenoid() {
 

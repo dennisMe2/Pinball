@@ -8,7 +8,7 @@
 #ifndef SOLENOID_H_
 #define SOLENOID_H_
 
-#include "PortUser.h"
+#include "../Logic/PortUser.h"
 
 
 class Solenoid: public PortUser {

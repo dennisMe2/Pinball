@@ -6,10 +6,6 @@
  */
 
 #include "PortExpander.h"
-#include "MCP23S17.h"
-#include <SPI.h>
-#include <Arduino.h>
-#include "Display.h"
 
 PortExpander::PortExpander(SPIClass* spi, unsigned char chipSelect,
 		unsigned char address) :

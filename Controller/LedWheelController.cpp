@@ -6,7 +6,8 @@
  */
 
 #include "LedWheelController.h"
-#include "Utils.h"
+
+#include "../Utils.h"
 
 LedWheelController::LedWheelController(BoatController* boatie) {
 	boat = boatie;
