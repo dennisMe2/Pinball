@@ -8,15 +8,15 @@
 #ifndef GAME_H_
 #define GAME_H_
 
-#define GAME_OVER 0
-#define COIN_IN 1
-#define FIRST_PLAYER_UP 2
-#define PLAYER_UP 3
-#define PLAYER_PLAYING 4
-#define TILT 5
-#define PLAYER_LOST_BALL 6
-#define PLAY_AGAIN 7
-
+	#define GAME_OVER 0
+	#define COIN_IN 1
+	#define FIRST_PLAYER_UP 2
+	#define PLAYER_UP 3
+	#define PLAYER_PLAYING 4
+	#define TILT 5
+	#define PLAYER_LOST_BALL 6
+	#define PLAY_AGAIN 7
+	#define BEFORE_PLAY 8
 
 #include <Arduino.h>
 #include "../Game/Player.h"

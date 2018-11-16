@@ -25,7 +25,7 @@ void DelayedKickOut::activate(){
 	if(wheel !=0) wheel->pause();
 }
 
-void DelayedKickOut::activateDelayed(){
+void DelayedKickOut::activateImmediate(){
 	activationStart = 0;
 	Solenoid::activate();
 	if(wheel !=0) wheel->unPause();
@@ -33,6 +33,6 @@ void DelayedKickOut::activateDelayed(){
 
  void DelayedKickOut::checkDelayedActivation(){
 	 if((activationStart != 0) && ((signed int)(intMillis() - activationStart) > 0)){
-		 activateDelayed();
+		 activateImmediate();
 	 }
  };

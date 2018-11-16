@@ -26,6 +26,8 @@ public:
 	void animate();
 	void pause();
 	void unPause();
+	void reset();
+	uint8_t getPoints();
 	void setDelay(unsigned int delay){animationDelay=delay;};
 private:
 	SmartLed* leds[10];

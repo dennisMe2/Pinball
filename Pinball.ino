@@ -18,6 +18,7 @@
 #include "Logic/Switch.h"
 #include "Power/DelayedKickOut.h"
 #include "Power/Solenoid.h"
+#include "Controller/PostController.h"
 
 #define LED_PIN 6
 
@@ -55,29 +56,28 @@ PortExpander switchBank2 = PortExpander(&SPI, CSportExpander, 3);
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(44, LED_PIN,
 NEO_RGB + NEO_KHZ800);
 
-
 LedPalmController palm = LedPalmController();
 DumbLedController dumbLeds = DumbLedController();
 
 DumbLed rollover_100 = DumbLed(&strip, 0, RED);
-DumbLed b = DumbLed(&strip, 1, WHITE);
+DumbLed a = DumbLed(&strip, 1, WHITE);
 DumbLed islandRight = DumbLed(&strip, 2, WHITE);
 DumbLed topRightSideUpper = DumbLed(&strip, 3, WHITE);
 DumbLed topRightSideLower = DumbLed(&strip, 4, WHITE);
-DumbLed topRightKicker = DumbLed(&strip, 5, WHITE);
+DumbLed topLeftKicker = DumbLed(&strip, 5, WHITE);
 DumbLed rightSideUpper = DumbLed(&strip, 6, WHITE);
-DumbLed bottomRightKicker = DumbLed(&strip, 7, WHITE);
+DumbLed bottomLeftKicker = DumbLed(&strip, 7, WHITE);
 SmartLed palmTree1 = SmartLed(&strip, 8, GREEN);
 SmartLed palmTree2 = SmartLed(&strip, 9, GREEN);
 SmartLed palmTree3 = SmartLed(&strip, 10, GREEN);
 SmartLed palmTree4 = SmartLed(&strip, 11, YELLOW);
 SmartLed palmTree10x = SmartLed(&strip, 12, RED);
-DumbLed a = DumbLed(&strip, 13, WHITE);
+DumbLed b = DumbLed(&strip, 13, WHITE);
 DumbLed islandLeft = DumbLed(&strip, 14, WHITE);
 DumbLed topLeftSideUpper = DumbLed(&strip, 15, WHITE);
 DumbLed topLeftSideLower = DumbLed(&strip, 16, WHITE);
-DumbLed topLeftKicker = DumbLed(&strip, 17, WHITE);
-DumbLed bottomLeftKicker = DumbLed(&strip, 18, WHITE);
+DumbLed topRightKicker = DumbLed(&strip, 17, WHITE);
+DumbLed bottomRightKicker = DumbLed(&strip, 18, WHITE);
 DumbLed leftSideUpper = DumbLed(&strip, 19, WHITE);
 DumbLed leftSideLower = DumbLed(&strip, 20, WHITE);
 
@@ -152,7 +152,10 @@ Solenoid tilt = Solenoid(0); // normally on!
 
 BoatController boat = BoatController(&yellow, &green, &blue, &red);
 LedWheelController wheel = LedWheelController(&boat);
-ABController abController = ABController(&a, &b, &topLeftKicker, &topRightKicker, &bottomLeftKicker, &bottomRightKicker);
+ABController abController = ABController(&a, &b, &topLeftKicker,
+		&topRightKicker, &bottomLeftKicker, &bottomRightKicker);
+PostController post = PostController(&postUpper, &postLower, &postUp,
+		&postDown);
 
 void setup() {
 	Serial.begin(9600);
@@ -188,9 +191,9 @@ void setup() {
 	wheel.setGame(&game);
 
 	palm.addLed(&palmTree1, 0, 1);
-	palm.addLed(&palmTree2, 1, 2);
-	palm.addLed(&palmTree3, 2, 3);
-	palm.addLed(&palmTree4, 3, 4);
+	palm.addLed(&palmTree2, 1, 1);
+	palm.addLed(&palmTree3, 2, 1);
+	palm.addLed(&palmTree4, 3, 1);
 	palm.addLed(&palmTree10x, 4, 10);
 
 	//Port A
@@ -309,7 +312,7 @@ void loop() {
 		if (loopTime > nextActivationTime) {
 			switch (testCounter) {
 			case 0:
-				kickOutTop.activateDelayed();
+				kickOutTop.activateImmediate();
 				break;
 			case 1:
 				kickerTopLeft.activate();
@@ -324,17 +327,17 @@ void loop() {
 				kickerBottomRight.activate();
 				break;
 			case 5:
-				kickOutLeft.activateDelayed();
+				kickOutLeft.activateImmediate();
 				break;
 			case 6:
-				kickOutRight.activateDelayed();
+				kickOutRight.activateImmediate();
 				break;
 			case 7: //the port pin firing order is switched here so you can see if the mechanicals are in order
-				postUp.activate();
+				post.postUp();
 				break;
 			case 8: //the port pin firing order is switched here so you can see if the mechanicals are in order
 					//Port B
-				postDown.activate();
+				post.postDown();
 				break;
 			case 9:
 				replayGate.activate();
@@ -358,6 +361,8 @@ void loop() {
 		dumbLeds.changeColors(BLUE);
 
 		palm.setDelay(300); //fast animation
+		palm.startAnimation();
+
 		wheel.setDelay(150);
 		tilt.deactivate();
 
@@ -386,9 +391,9 @@ void loop() {
 		dispScore.showNumPlayers();
 
 	} else if (game.getState() == FIRST_PLAYER_UP) {
-		game.setState(PLAYER_PLAYING);
+		game.setState(BEFORE_PLAY);
 
-	} else if (game.getState() == PLAY_AGAIN) {
+	} else if (game.getState() == PLAY_AGAIN) { //immediate replay without loss of achievements
 		ballChute.activate();
 		game.setState(PLAYER_PLAYING);
 
@@ -400,20 +405,28 @@ void loop() {
 
 		if (sw_coinIn.triggered()) {
 			ballChute.activate();
-			game.setState(PLAYER_PLAYING);
+			game.setState(BEFORE_PLAY);
 		}
 
+	} else if (game.getState() == BEFORE_PLAY) {
+		abController.reset();
+		wheel.reset();
+
+		game.setState(PLAYER_PLAYING);
+
 	} else if (game.getState() == PLAYER_PLAYING) { //GAME ON!
-		//palm.setDelay(15000); //slower animation
 		wheel.setDelay(1500);
+		palm.stopAnimation();
 		dumbLeds.changeColors(WHITE);
 
 		dispGame.showPlayerUp();
 		dispScore.showScore();
 
-		if (game.getReplay()){
+		game.setMultiplier(1);
+
+		if (game.getReplay()) {
 			samePlayerShoots.setColor(RED);
-		}else{
+		} else {
 			samePlayerShoots.setColor(BLACK);
 		}
 
@@ -424,97 +437,103 @@ void loop() {
 			game.lostBall();
 		}
 
-		if(sw_rollOverA.triggered()){
+		if (sw_rollOver_100.triggered()) {
+			game.addScore(100);
+		}
+
+		if (sw_rollOverA.triggered()) {
 			abController.setA();
 		}
 
-		if(sw_rollOverB.triggered()){
+		if (sw_rollOverB.triggered()) {
 			abController.setB();
 		}
 
-		if (sw_targetA.triggered() ) {
-			postUp.activate();
-			game.addScore(10);
+		if (sw_targetA.triggered()) {
+			(abController.isSetA()) ? game.addScore(100) : game.addScore(10);
 		}
 
-		if (sw_targetB.triggered() ) {
-			postUp.activate();
-			game.addScore(10);
+		if (sw_targetB.triggered()) {
+			(abController.isSetB()) ? game.addScore(100) : game.addScore(10);
 		}
 
 		if (sw_targetPostUpLeft.triggered()
 				|| sw_targetPostUpRight.triggered()) {
-			postUp.activate();
-			game.addScore(10);
+			post.postUp();
 		}
 
 		if (sw_targetPostDownLeft.triggered()
 				|| sw_targetPostDownRight.triggered()) {
-			postDown.activate();
+			post.postDown();
+			game.addScore(30);
 		}
 
 		if (sw_islandLeftTop.triggered() || sw_islandLeftBottom.triggered()
 				|| sw_islandRightTop.triggered()
 				|| sw_islandRightBottom.triggered()) {
 			game.addScore(1);
-			postDown.activate();
+			post.postDown();
 		}
 
 		if (sw_kickOutTop.triggered()) {
 			kickOutTop.activate();
-			game.addScore(10);
+			palm.increment();
+			game.addScore(palm.getMultiplier() * 50);
 		}
 
 		if (sw_kickerTopLeft.triggered()) {
 			mP3.play(1);
-			game.addScore(10);
+			game.addScore(palm.getMultiplier()  * (abController.isSetB()) ? 10 : 1);
 			kickerTopLeft.activate();
 		}
 
 		if (sw_kickerTopRight.triggered()) {
 			mP3.play(1);
 			kickerTopRight.activate();
-			game.addScore(10);
+			game.addScore(palm.getMultiplier() * (abController.isSetA()) ? 10 : 1);
 		}
 
 		if (sw_kickerBottomRight.triggered()) {
 			mP3.play(1);
-			game.addScore(10);
+			game.addScore(palm.getMultiplier() * (abController.isSetA()) ? 10 : 1);
 			kickerBottomRight.activate();
 		}
 
 		if (sw_kickerBottomLeft.triggered()) {
 			mP3.play(1);
-			game.addScore(10);
+			game.addScore(palm.getMultiplier() * (abController.isSetB()) ? 10 : 1);
 			kickerBottomLeft.activate();
 		}
 
 		if (sw_kickOutLeft.triggered()) {
-			game.addScore(10);
+			game.addScore(wheel.getPoints());
 			kickOutLeft.activate();
 		}
 
 		if (sw_kickOutRight.triggered()) {
-			game.addScore(10);
+			game.addScore(wheel.getPoints());
 			kickOutRight.activate();
 		}
 
 		if (sw_rollOverPassRight.triggered()) {
-			game.addScore(10);
+			wheel.getPoints();
 			replayGate.activate();
 		}
+		if (sw_rollOverPassLeft.triggered()) {
+			wheel.getPoints();
+		}
 
-		//Set games score multiplier depending on the lit LEDs
-		game.setMultiplier(palm.getMultiplier());
 
 		//someone banged the board, big trouble!
 		if (sw_tilt.triggered()) {
+			game.setMultiplier(0);
 			game.setState(TILT);
-			postDown.activate();
+			post.postDown();
 			mP3.play(2);
 		}
 
 	} else if (game.getState() == TILT) {
+		palm.stopAnimation();
 		tilt.deactivate();
 		dumbLeds.changeColors(RED);
 
@@ -524,15 +543,15 @@ void loop() {
 
 		//important ball doesn't end up hanging in a kickout forever
 		if (sw_kickOutTop.triggered()) {
-			kickOutTop.activateDelayed();
+			kickOutTop.activateImmediate();
 		}
 
 		if (sw_kickOutLeft.triggered()) {
-			kickOutLeft.activateDelayed();
+			kickOutLeft.activateImmediate();
 		}
 
 		if (sw_kickOutRight.triggered()) {
-			kickOutRight.activateDelayed();
+			kickOutRight.activateImmediate();
 		}
 
 	}

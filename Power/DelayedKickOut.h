@@ -17,7 +17,7 @@ public:
 	DelayedKickOut(unsigned int delayMaxMs);
 	virtual void activate();
 	virtual void checkDelayedActivation();
-	void activateDelayed();
+	void activateImmediate();
 	void setWheelController(LedWheelController* wheelController);
 private:
 	unsigned int activationStart = 0;

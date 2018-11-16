@@ -21,6 +21,8 @@ void LedPalmController::addLed(SmartLed* led, int index, uint8_t multiplier) {
 	multipliers[index] = multiplier;
 }
 void LedPalmController::animate() {
+	if(animationStopped) return;
+
 	if(millis() > nextTime){
 		if (currentLed > 4) {
 			ledsOff();
@@ -32,4 +34,19 @@ void LedPalmController::animate() {
 		nextTime = millis() + animationDelay;
 	}
 
+}
+void LedPalmController::increment(){
+	leds[currentLed]->on();
+	currentLed++;
+}
+
+void LedPalmController::stopAnimation(){
+	ledsOff();
+	currentLed = 0;
+	animationStopped = true;
+}
+
+void LedPalmController::startAnimation(){
+	currentLed = 0;
+	animationStopped = false;
 }

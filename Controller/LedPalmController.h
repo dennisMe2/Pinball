@@ -17,6 +17,9 @@ public:
 	void addLed(SmartLed* led, int index, uint8_t multiplier);
 	void ledsOff();
 	void animate();
+	void stopAnimation();
+	void startAnimation();
+	void increment();
 	void setDelay(unsigned int delay){animationDelay=delay;};
 	uint8_t getMultiplier(){return multipliers[currentLed];};
 private:
@@ -25,6 +28,7 @@ private:
 	uint8_t currentLed = 0;
 	unsigned long nextTime = 0;
 	unsigned int animationDelay = 15000;
+	bool animationStopped = false;
 };
 
 #endif /* LEDPALMCONTROLLER_H_ */

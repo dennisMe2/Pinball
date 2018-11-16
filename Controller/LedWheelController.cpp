@@ -19,8 +19,32 @@ void LedWheelController::addLed10(SmartLed* led){
 	led10x = led;
 	led10x->off();
 }
+
+void LedWheelController::reset(){
+	led10x->off();
+	isPaused = false;
+	boat->allOff();
+}
+
 void LedWheelController::setGame(Game* game){
 	this->game = game;
+}
+
+uint8_t LedWheelController::getPoints(){
+	if (boat->blueOn() && colours[currentLed] == WHEEL_B)
+		return points[currentLed] * 10;
+
+	if (boat->greenOn() && colours[currentLed] == WHEEL_G)
+			return points[currentLed] * 10;
+
+	if (boat->yellowOn() && colours[currentLed] == WHEEL_Y)
+			return points[currentLed] * 10;
+
+	if (boat->redOn() && colours[currentLed] == WHEEL_R)
+			return points[currentLed] * 10;
+
+	return points[currentLed];
+
 }
 
 void LedWheelController::pause(){

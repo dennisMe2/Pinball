@@ -9,34 +9,45 @@
 
 ABController::ABController(DumbLed* a, DumbLed* b, DumbLed* tl, DumbLed* tr, DumbLed* bl, DumbLed* br) {
 	this->a = a;
-	this->a->setColor(BLACK);
-
 	this->b = b;
-	this->b->setColor(BLACK);
-
-
 	this->tl = tl;
-	this->tl->setColor(BLACK);
-
 	this->tr = tr;
-	this->tr->setColor(BLACK);
-
 	this->bl = bl;
-	this->bl->setColor(BLACK);
-
 	this->br = br;
-	this->br->setColor(BLACK);
 
+	reset();
 }
 
 void ABController::setA(){
 	a->setColor(RED);
 	tr->setColor(WHITE);
 	bl->setColor(WHITE);
+	isSetLedA = true;
 }
 
 void ABController::setB(){
 	b->setColor(RED);
 	tl->setColor(WHITE);
 	br->setColor(WHITE);
+	isSetLedB = true;
+}
+
+bool ABController::isSetA(){
+	return isSetLedA;
+}
+
+bool ABController::isSetB(){
+	return isSetLedB;
+}
+
+void ABController::reset(){
+		this->a->setColor(BLACK);
+		this->b->setColor(BLACK);
+		this->tl->setColor(BLACK);
+		this->tr->setColor(BLACK);
+		this->bl->setColor(BLACK);
+		this->br->setColor(BLACK);
+
+		isSetLedA = false;
+		isSetLedB = false;
 }
