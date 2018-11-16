@@ -48,6 +48,8 @@ uint8_t LedWheelController::getPoints(){
 }
 
 void LedWheelController::pause(){
+	if (isPaused) return; //prevent repeat triggering
+
 	isPaused = true;
 
 	switch (colours[currentLed]){

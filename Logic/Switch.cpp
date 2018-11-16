@@ -31,9 +31,10 @@ bool Switch::on(){
 }
 
 void Switch::setStatus(uint8_t stat){
-	if( (intMillis() - nextChangeTime) > 0 && stat != previousStatus ){
+	//if( (intMillis() - nextChangeTime) > 0 && stat != previousStatus ){
+	if(stat != previousStatus ){
 		PortUser::setStatus(stat);
-		nextChangeTime = intMillis() + debounceDelay;
+		//nextChangeTime = intMillis();
 		previousStatus = stat;
 		//trigger only on rising/falling edges
 		if(activeLow && (stat == LOW)) trig = true;

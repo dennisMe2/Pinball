@@ -299,6 +299,9 @@ void addPlayer() {
 	mP3.play(3);
 }
 
+
+unsigned long ballLaunched = 0;
+
 void loop() {
 	loopTime = millis();
 
@@ -308,10 +311,11 @@ void loop() {
 	switchBank1.refreshInputs();
 	switchBank2.refreshInputs();
 
-	if (testMode) {
-		if (loopTime > nextActivationTime) {
+	if ((game.getState() == LOCATE_BALL) || testMode) {
+		if ((loopTime - nextActivationTime) >  500) {
 			switch (testCounter) {
 			case 0:
+				post.postDown();
 				kickOutTop.activateImmediate();
 				break;
 			case 1:
@@ -352,11 +356,13 @@ void loop() {
 				tilt.activate();
 				break;
 			}
+			if (++testCounter > 12){
+				testCounter = 0;
+				game.setState(GAME_OVER);
+			}
+			nextActivationTime = loopTime;
 		}
-		if (++testCounter > 12)
-			testCounter = 0;
 
-		nextActivationTime = loopTime + 1000;
 	} else if (game.getState() == GAME_OVER) {
 		dumbLeds.changeColors(BLUE);
 
@@ -372,6 +378,7 @@ void loop() {
 		//adding a coin adds a player; max = 4 once a game starts no players can be added
 		if (sw_coinIn.triggered()) {
 			ballChute.activate();
+			ballLaunched = loopTime;
 			game.setState(COIN_IN);
 			addPlayer();
 		}
@@ -383,7 +390,7 @@ void loop() {
 			addPlayer();
 		}
 		//Shooting a ball immediately starts player 1's game with however many players were added
-		if (sw_ballRelease.triggered()) {
+		if (sw_ballRelease.triggered() && ((loopTime - ballLaunched) > 1000)) {
 			game.setState(FIRST_PLAYER_UP);
 		}
 

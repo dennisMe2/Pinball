@@ -17,6 +17,7 @@
 	#define PLAYER_LOST_BALL 6
 	#define PLAY_AGAIN 7
 	#define BEFORE_PLAY 8
+	#define LOCATE_BALL 9
 
 #include <Arduino.h>
 #include "../Game/Player.h"
@@ -39,7 +40,7 @@ public:
 	unsigned int getActivePlayer(){return activePlayer;};
 	void setMultiplier(uint8_t multi);
 private:
-	uint8_t state = GAME_OVER;
+	uint8_t state = LOCATE_BALL;
 	uint8_t multiplier = 1;
 	uint8_t ballCount = 3;
 	uint8_t activePlayer = 0;
