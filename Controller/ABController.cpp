@@ -7,7 +7,7 @@
 
 #include "ABController.h"
 
-ABController::ABController(DumbLed* a, DumbLed* b, DumbLed* tl, DumbLed* tr, DumbLed* bl, DumbLed* br) {
+ABController::ABController(BasicLed* a, BasicLed* b, BasicLed* tl, BasicLed* tr, BasicLed* bl, BasicLed* br) {
 	this->a = a;
 	this->b = b;
 	this->tl = tl;
@@ -25,11 +25,25 @@ void ABController::setA(){
 	isSetLedA = true;
 }
 
+void ABController::resetA(){
+	a->setColor(GLOW_B);
+	tr->setColor(GLOW_B);
+	bl->setColor(GLOW_B);
+	isSetLedA = false;
+}
+
 void ABController::setB(){
 	b->setColor(RED);
 	tl->setColor(WHITE);
 	br->setColor(WHITE);
 	isSetLedB = true;
+}
+
+void ABController::resetB(){
+	b->setColor(GLOW_B);
+	tl->setColor(GLOW_B);
+	br->setColor(GLOW_B);
+	isSetLedB = false;
 }
 
 bool ABController::isSetA(){
@@ -41,12 +55,12 @@ bool ABController::isSetB(){
 }
 
 void ABController::reset(){
-		this->a->setColor(BLACK);
-		this->b->setColor(BLACK);
-		this->tl->setColor(BLACK);
-		this->tr->setColor(BLACK);
-		this->bl->setColor(BLACK);
-		this->br->setColor(BLACK);
+		this->a->setColor(GLOW_B);
+		this->b->setColor(GLOW_B);
+		this->tl->setColor(GLOW_B);
+		this->tr->setColor(GLOW_B);
+		this->bl->setColor(GLOW_B);
+		this->br->setColor(GLOW_B);
 
 		isSetLedA = false;
 		isSetLedB = false;

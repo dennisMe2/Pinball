@@ -5,15 +5,15 @@
  *      Author: dennis
  */
 
-#ifndef LEDPALMCONTROLLER_H_
-#define LEDPALMCONTROLLER_H_
+#ifndef PALMCONTROLLER_H_
+#define PALMCONTROLLER_H_
 
 #include <Arduino.h>
 
 #include "../Led/SmartLed.h"
-class LedPalmController {
+class PalmController {
 public:
-	LedPalmController();
+	PalmController();
 	void addLed(SmartLed* led, int index, uint8_t multiplier);
 	void ledsOff();
 	void animate();
@@ -31,4 +31,4 @@ private:
 	bool animationStopped = false;
 };
 
-#endif /* LEDPALMCONTROLLER_H_ */
+#endif /* PALMCONTROLLER_H_ */

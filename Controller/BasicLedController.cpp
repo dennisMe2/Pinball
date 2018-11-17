@@ -5,18 +5,18 @@
  *      Author: dennis
  */
 
-#include "DumbLedController.h"
+#include "BasicLedController.h"
 
-DumbLedController::DumbLedController() {
+BasicLedController::BasicLedController() {
 	// TODO Auto-generated constructor stub
 
 }
-void DumbLedController::addLed(DumbLed* led){
+void BasicLedController::addLed(BasicLed* led){
 	dumbLeds[numLeds] = led;
 	numLeds++;
 }
 
-void DumbLedController::changeColors(uint8_t r, uint8_t g, uint8_t b){
+void BasicLedController::changeColors(uint8_t r, uint8_t g, uint8_t b){
 	for(int i=0; i<numLeds; i++){
 		dumbLeds[i]->setColor(r,g,b);
 	}

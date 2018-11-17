@@ -8,18 +8,25 @@
 #ifndef GAME_H_
 #define GAME_H_
 
-	#define GAME_OVER 0
-	#define COIN_IN 1
-	#define FIRST_PLAYER_UP 2
-	#define PLAYER_UP 3
-	#define PLAYER_PLAYING 4
-	#define TILT 5
-	#define PLAYER_LOST_BALL 6
-	#define PLAY_AGAIN 7
-	#define BEFORE_PLAY 8
-	#define LOCATE_BALL 9
+
+
+#define GAME_OVER 0
+#define COIN_IN 1
+#define FIRST_PLAYER_UP 2
+#define PLAYER_UP 3
+#define PLAYER_PLAYING 4
+#define TILT 5
+#define PLAYER_LOST_BALL 6
+#define PLAY_AGAIN 7
+#define BEFORE_PLAY 8
+#define LOCATE_BALL 9
+#define TEST_MODE 10
+#define NEW_HISCORE_GAMEOVER 11
+#define NEW_HISCORE_NEXT_PLAYER 12
+
 
 #include <Arduino.h>
+#include <EEPROM.h>
 #include "../Game/Player.h"
 
 
@@ -36,8 +43,10 @@ public:
 	void setState(uint8_t newState);
 	uint8_t getState();
 	bool addPlayer();
+	unsigned int getHiScore();
 	unsigned int getNumPlayers();
 	unsigned int getActivePlayer(){return activePlayer;};
+	unsigned int getHiScorePlayer(){return hiScorePlayer;};
 	void setMultiplier(uint8_t multi);
 private:
 	uint8_t state = LOCATE_BALL;
@@ -49,6 +58,8 @@ private:
 	bool replay:1;
 	bool replayUsed:1;
 	void resetReplay();
+	unsigned int hiScore;
+	int8_t hiScorePlayer =-1;
 };
 
 #endif /* GAME_H_ */

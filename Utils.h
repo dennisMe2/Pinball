@@ -18,6 +18,7 @@
 #define WHITE 255,240,230
 #define BLACK 0,0,0
 #define GREY 127,127,127
+#define GLOW_B 10,10, 50
 
 unsigned int intMillis();
 

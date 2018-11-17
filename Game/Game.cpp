@@ -16,6 +16,8 @@ Game::Game(int ballC, Player* player1, Player* player2, Player* player3, Player*
 	players[2] = player3;
 	players[3] = player4;
 	resetReplay();
+	EEPROM.get(0, hiScore);
+	if (hiScore > 9999) hiScore = 0;
 }
 
 void Game::setMultiplier(uint8_t multi) {
@@ -65,6 +67,10 @@ void Game::addScore(uint8_t points) {
 		players[activePlayer]->ballsLeft++;
 		players[activePlayer]->bonusBalls++;
 	}
+
+	if(players[activePlayer]->score > hiScore){
+		hiScorePlayer = activePlayer;
+	}
 }
 
 unsigned int Game::getScore() {
@@ -82,8 +88,15 @@ unsigned int Game::getNumPlayers(){
 void Game::setReplay(){
 	replay = true;
 }
+
+unsigned int Game::getHiScore(){
+	return hiScore;
+}
+
 void Game::lostBall() {
 	uint8_t startPlayerIndex = activePlayer;
+	unsigned int score = players[activePlayer]->score;
+	int8_t newHiScorePlayer = -1;
 
 	if (replay && (! replayUsed))
 	{
@@ -95,6 +108,13 @@ void Game::lostBall() {
 
 	players[activePlayer]->ballsLeft--; //subtract ball from active player
 
+	if(score > hiScore){
+		EEPROM.put(0,hiScore);
+		hiScore = score;
+		newHiScorePlayer = activePlayer;
+		hiScorePlayer = activePlayer;
+	}
+
 	if (players[activePlayer]->ballsLeft == 0) players[activePlayer]->gameIsOver = true;
 
 	do{
@@ -103,11 +123,16 @@ void Game::lostBall() {
 	//keep checking until we find a player with balls or back to the player we began with
 
 	//if we were unable to find any player with balls, declare the game over
-	if(players[activePlayer]->gameIsOver){
+	if(newHiScorePlayer <0 && players[activePlayer]->gameIsOver){
 		state = GAME_OVER;
 		numberOfPlayers = 0;
-	}else{
+	} else if(newHiScorePlayer >=0 && players[activePlayer]->gameIsOver){
+		state = NEW_HISCORE_GAMEOVER;
+	} else if (newHiScorePlayer <0){
 		state = PLAYER_UP;
+		resetReplay();
+	} else {
+		state = NEW_HISCORE_NEXT_PLAYER;
 		resetReplay();
 	}
 }

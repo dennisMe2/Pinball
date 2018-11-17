@@ -5,49 +5,49 @@
  *      Author: dennis
  */
 
-#include "LedWheelController.h"
+#include "WheelController.h"
 
 #include "../Utils.h"
 
-LedWheelController::LedWheelController(BoatController* boatie) {
+WheelController::WheelController(BoatController* boatie) {
 	boat = boatie;
 }
-void LedWheelController::addLed(SmartLed* led, int index){
+void WheelController::addLed(SmartLed* led, int index){
 	leds[index] = led;
 }
-void LedWheelController::addLed10(SmartLed* led){
+void WheelController::addLed10(SmartLed* led){
 	led10x = led;
 	led10x->off();
 }
 
-void LedWheelController::reset(){
+void WheelController::reset(){
 	led10x->off();
 	isPaused = false;
 	boat->allOff();
 }
 
-void LedWheelController::setGame(Game* game){
+void WheelController::setGame(Game* game){
 	this->game = game;
 }
 
-uint8_t LedWheelController::getPoints(){
-	if (boat->blueOn() && colours[currentLed] == WHEEL_B)
+uint8_t WheelController::getPoints(){
+	if (boat->blueIsOn() && colours[currentLed] == WHEEL_B)
 		return points[currentLed] * 10;
 
-	if (boat->greenOn() && colours[currentLed] == WHEEL_G)
+	if (boat->greenIsOn() && colours[currentLed] == WHEEL_G)
 			return points[currentLed] * 10;
 
-	if (boat->yellowOn() && colours[currentLed] == WHEEL_Y)
+	if (boat->yellowIsOn() && colours[currentLed] == WHEEL_Y)
 			return points[currentLed] * 10;
 
-	if (boat->redOn() && colours[currentLed] == WHEEL_R)
+	if (boat->redIsOn() && colours[currentLed] == WHEEL_R)
 			return points[currentLed] * 10;
 
 	return points[currentLed];
 
 }
 
-void LedWheelController::pause(){
+void WheelController::pause(){
 	if (isPaused) return; //prevent repeat triggering
 
 	isPaused = true;
@@ -77,11 +77,11 @@ void LedWheelController::pause(){
 
 }
 
-void LedWheelController::unPause(){
+void WheelController::unPause(){
 	isPaused = false;
 }
 
-void LedWheelController::animate(){
+void WheelController::animate(){
 	if (isPaused) return;
 
 	if(millis() > nextTime){

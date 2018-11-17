@@ -8,24 +8,26 @@
 #ifndef ABCONTROLLER_H_
 #define ABCONTROLLER_H_
 
-#include "../Led/DumbLed.h"
+#include "../Led/BasicLed.h"
 #include "../Utils.h"
 
 class ABController {
 public:
-	ABController(DumbLed* a, DumbLed* b, DumbLed* tl, DumbLed* tr, DumbLed* bl, DumbLed* br);
+	ABController(BasicLed* a, BasicLed* b, BasicLed* tl, BasicLed* tr, BasicLed* bl, BasicLed* br);
 	void setA();
+	void resetA();
 	void setB();
+	void resetB();
 	bool isSetA();
 	bool isSetB();
 	void reset();
 private:
-	DumbLed* a;
-	DumbLed* b;
-	DumbLed* tl;
-	DumbLed* tr;
-	DumbLed* bl;
-	DumbLed* br;
+	BasicLed* a;
+	BasicLed* b;
+	BasicLed* tl;
+	BasicLed* tr;
+	BasicLed* bl;
+	BasicLed* br;
 	bool isSetLedA:1;
 	bool isSetLedB:1;
 };

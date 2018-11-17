@@ -58,6 +58,10 @@
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/TM1637}&quot;"/>
                                     									
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/MCP23S17}&quot;"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/EEPROM}&quot;"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/EEPROM/src}&quot;"/>
                                     								
                                 </option>
                                 								
@@ -88,6 +92,10 @@
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/TM1637}&quot;"/>
                                     									
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/MCP23S17}&quot;"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/EEPROM}&quot;"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/EEPROM/src}&quot;"/>
                                     								
                                 </option>
                                 								
@@ -118,6 +126,10 @@
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/TM1637}&quot;"/>
                                     									
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/MCP23S17}&quot;"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/EEPROM}&quot;"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Pinball/libraries/EEPROM/src}&quot;"/>
                                     								
                                 </option>
                                 								

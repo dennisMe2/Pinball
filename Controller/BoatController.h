@@ -7,23 +7,27 @@
 
 #ifndef BOATCONTROLLER_H_
 #define BOATCONTROLLER_H_
-#include "../Led/DumbLed.h"
+#include "../Led/BasicLed.h"
 #include <Arduino.h>
 
 class BoatController {
 public:
-	BoatController(DumbLed* ledY, DumbLed* ledG, DumbLed* ledB, DumbLed* ledR);
-	bool yellowOn();
-	bool greenOn();
-	bool blueOn();
-	bool redOn();
+	BoatController(BasicLed* ledY, BasicLed* ledG, BasicLed* ledB, BasicLed* ledR);
+	void yellowOn();
+	bool yellowIsOn();
+	void greenOn();
+	bool greenIsOn();
+	void blueOn();
+	bool blueIsOn();
+	void redOn();
+	bool redIsOn();
 	bool areAllOn();
 	void allOff();
 private:
-	DumbLed* yellow;
-	DumbLed* green;
-	DumbLed* blue;
-	DumbLed* red;
+	BasicLed* yellow;
+	BasicLed* green;
+	BasicLed* blue;
+	BasicLed* red;
 	bool isYellowOn:1;
 	bool isGreenOn:1;
 	bool isBlueOn:1;

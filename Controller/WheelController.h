@@ -5,8 +5,8 @@
  *      Author: dennis
  */
 
-#ifndef LEDWHEELCONTROLLER_H_
-#define LEDWHEELCONTROLLER_H_
+#ifndef WHEELCONTROLLER_H_
+#define WHEELCONTROLLER_H_
 
 #define WHEEL_Y 1
 #define WHEEL_G 2
@@ -17,9 +17,9 @@
 #include "BoatController.h"
 #include "../Game/Game.h"
 
-class LedWheelController {
+class WheelController {
 public:
-	LedWheelController(BoatController* boatie);
+	WheelController(BoatController* boatie);
 	void addLed(SmartLed* led, int index);
 	void addLed10(SmartLed* led);
 	void setGame(Game* game);
@@ -42,4 +42,4 @@ private:
 	Game* game =0;
 };
 
-#endif /* LEDWHEELCONTROLLER_H_ */
+#endif /* WHEELCONTROLLER_H_ */

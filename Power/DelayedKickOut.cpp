@@ -16,7 +16,7 @@ DelayedKickOut::DelayedKickOut(unsigned int delayMaxMs) : Solenoid() {
 	maxDelay = delayMaxMs;
 }
 
-void DelayedKickOut::setWheelController(LedWheelController* wheelController){
+void DelayedKickOut::setWheelController(WheelController* wheelController){
 	wheel = wheelController;
 }
 

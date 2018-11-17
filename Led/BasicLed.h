@@ -5,14 +5,14 @@
  *      Author: dennis
  */
 
-#ifndef DUMBLED_H_
-#define DUMBLED_H_
+#ifndef BASICLED_H_
+#define BASICLED_H_
 #include <Arduino.h>
 #include <Adafruit_NeoPixel.h>
 
-class DumbLed {
+class BasicLed {
 public:
-	DumbLed(Adafruit_NeoPixel* strip, unsigned char pos,uint8_t r, uint8_t g, uint8_t b);
+	BasicLed(Adafruit_NeoPixel* strip, unsigned char pos,uint8_t r, uint8_t g, uint8_t b);
 	void setColor(uint8_t r, uint8_t g, uint8_t b);
 
 private:
@@ -20,4 +20,4 @@ private:
 	uint8_t stripPos;
 };
 
-#endif /* DUMBLED_H_ */
+#endif /* BASICLED_H_ */

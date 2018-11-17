@@ -17,6 +17,7 @@
 #define SHOW_NUM_PLAYERS 5
 #define SHOW_PLAYER_UP 6
 #define SHOW_SWITCHES 7
+#define SHOW_HISCORE_PLAYER 8
 
 
 #include "Arduino.h"
@@ -79,29 +80,20 @@ public:
 		SEG_E | SEG_G | SEG_DP        					// r.
 	};
 
-
-
 	Display(uint8_t pinClk, uint8_t pinDIO);
 	void refreshDisplay();
-	void showInsertCoin();
-	void showScore();
-	void showPlayer();
-	void showNumPlayers();
-	void showHighScore();
-	void showGameOver();
-	void showPlayerUp();
 	void showSwitches(unsigned int switches);
-
+	void setFunction(int function);
 	void setGame(Game* gamePtr);
+
+private:
+	Game* gamePointer = 0;
 	uint8_t function = SHOW_INSERT_COIN;
 	unsigned long nextSegmentTime = millis();
 	uint8_t nextSegmentIndex = 0;
-	unsigned int period = 1000;
+	unsigned int period = 600;
 	unsigned int refresh = 500; //10Hz refresh rate
 	unsigned int switchData = 0;
-private:
-	Game* gamePointer = 0;
-	void setFunction(int function);
 };
 
 #endif /* DISPLAY_H_ */

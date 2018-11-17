@@ -9,7 +9,7 @@
 
 #include "../Utils.h"
 
-BoatController::BoatController(DumbLed* ledY, DumbLed* ledG, DumbLed* ledB,DumbLed* ledR) {
+BoatController::BoatController(BasicLed* ledY, BasicLed* ledG, BasicLed* ledB,BasicLed* ledR) {
 	yellow = ledY;
 	green = ledG;
 	blue = ledB;
@@ -18,27 +18,38 @@ BoatController::BoatController(DumbLed* ledY, DumbLed* ledG, DumbLed* ledB,DumbL
 	allOff();
 }
 
-bool BoatController::yellowOn(){
+void BoatController::yellowOn(){
 	yellow->setColor(YELLOW);
 	isYellowOn = true;
+}
+
+bool BoatController::yellowIsOn(){
 	return isYellowOn;
 }
 
-bool BoatController::greenOn(){
+void BoatController::greenOn(){
 	green->setColor(GREEN);
 	isGreenOn = true;
+}
+
+bool BoatController::greenIsOn(){
 	return isGreenOn;
 }
 
-bool BoatController::blueOn(){
+void BoatController::blueOn(){
 	blue->setColor(BLUE);
 	isBlueOn = true;
+}
+
+bool BoatController::blueIsOn(){
 	return isBlueOn;
 }
 
-bool BoatController::redOn(){
+void BoatController::redOn(){
 	red->setColor(RED);
 	isRedOn = true;
+}
+bool BoatController::redIsOn(){
 	return isRedOn;
 }
 

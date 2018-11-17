@@ -15,31 +15,9 @@ void Display::setGame(Game* gamePtr) {
 	gamePointer = gamePtr;
 }
 
-void Display::showInsertCoin() {
-	setFunction(SHOW_INSERT_COIN);
-}
-
-void Display::showScore() {
-	setFunction(SHOW_SCORE);
-}
-void Display::showPlayer() {
-	setFunction(SHOW_PLAYER);
-}
-void Display::showPlayerUp() {
-	setFunction(SHOW_PLAYER_UP);
-}
-void Display::showNumPlayers() {
-	setFunction(SHOW_NUM_PLAYERS);
-}
-void Display::showGameOver() {
-	setFunction(SHOW_GAME_OVER);
-}
-
-void Display::showHighScore() {
-	setFunction(SHOW_HIGH_SCORE);
-}
-
 void Display::setFunction(int func) {
+	if(function == func ) return; //don't re-set
+
 	nextSegmentTime = millis();
 	nextSegmentIndex = 0;
 	function = func;
@@ -55,7 +33,7 @@ void Display::refreshDisplay() {
 
 	switch (function) {
 	case SHOW_INSERT_COIN:
-		if (++nextSegmentIndex > 2)
+		if (++nextSegmentIndex > 6)
 			nextSegmentIndex = 0;
 		if (nextSegmentIndex == 0)
 			TM1637Display::setSegments(SEG_INS);
@@ -63,6 +41,15 @@ void Display::refreshDisplay() {
 			TM1637Display::setSegments(SEG_COIN);
 		if (nextSegmentIndex == 2)
 			TM1637Display::setSegments(SEG_OFF);
+		if (nextSegmentIndex == 3)
+			TM1637Display::setSegments(SEG_HIGH);
+		if (nextSegmentIndex == 4)
+			TM1637Display::setSegments(SEG_SCOR);
+		if (nextSegmentIndex == 5)
+			TM1637Display::showNumberDec(gamePointer->getHiScore(), false, 4, 0);
+		if (nextSegmentIndex == 6)
+			TM1637Display::setSegments(SEG_OFF);
+
 		nextSegmentTime = millis() + period;
 		break;
 
@@ -81,7 +68,7 @@ void Display::refreshDisplay() {
 		if (nextSegmentIndex == 1)
 			TM1637Display::setSegments(SEG_SCOR);
 		if (nextSegmentIndex == 2)
-			TM1637Display::showNumberDec(gamePointer->getScore(), false, 4, 0);
+			TM1637Display::showNumberDec(gamePointer->getHiScore(), false, 4, 0);
 		if (nextSegmentIndex == 3)
 			TM1637Display::setSegments(SEG_OFF);
 		nextSegmentTime = millis() + period;
@@ -99,6 +86,15 @@ void Display::refreshDisplay() {
 			TM1637Display::showNumberDec(gamePointer->getBalls(), false, 1, 3);
 			nextSegmentTime = millis() + refresh;
 			break;
+	case SHOW_HISCORE_PLAYER:
+
+				TM1637Display::setSegments(SEG_PLAYER_UP_A, 1,0);
+				TM1637Display::showNumberDec(gamePointer->getHiScorePlayer() + 1, false, 1, 1);
+				TM1637Display::setSegments(SEG_PLAYER_UP_B, 1,2);
+				TM1637Display::showNumberDec(gamePointer->getBalls(), false, 1, 3);
+				nextSegmentTime = millis() + refresh;
+				break;
+
 	case SHOW_NUM_PLAYERS:
 		TM1637Display::showNumberDec(gamePointer->getNumPlayers(), false, 4, 0);
 		nextSegmentTime = millis() + refresh;

@@ -8,18 +8,18 @@
 #ifndef POSTCONTROLLER_H_
 #define POSTCONTROLLER_H_
 
-#include "../Led/DumbLed.h"
+#include "../Led/BasicLed.h"
 #include "../Power/Solenoid.h"
 #include "../Utils.h"
 
 class PostController {
 public:
-	PostController(DumbLed* led1, DumbLed* led2, Solenoid* up, Solenoid* down);
+	PostController(BasicLed* led1, BasicLed* led2, Solenoid* up, Solenoid* down);
 	void postUp();
 	void postDown();
 private:
-	DumbLed* led1;
-	DumbLed* led2;
+	BasicLed* led1;
+	BasicLed* led2;
 	Solenoid* up;
 	Solenoid* down;
 };

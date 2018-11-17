@@ -7,7 +7,7 @@
 
 #include "PostController.h"
 
-PostController::PostController(DumbLed* led1, DumbLed* led2, Solenoid* up, Solenoid* down) {
+PostController::PostController(BasicLed* led1, BasicLed* led2, Solenoid* up, Solenoid* down) {
 	this->led1 = led1;
 	this->led2 = led2;
 	this->up = up;

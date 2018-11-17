@@ -5,22 +5,22 @@
  *      Author: dennis
  */
 
-#include "LedPalmController.h"
+#include "PalmController.h"
 
-LedPalmController::LedPalmController() {
+PalmController::PalmController() {
 	ledsOff();
 
 }
-void LedPalmController::ledsOff() {
+void PalmController::ledsOff() {
 	for (int i = 0; i < 5; i++) {
 		leds[i]->off();
 	}
 }
-void LedPalmController::addLed(SmartLed* led, int index, uint8_t multiplier) {
+void PalmController::addLed(SmartLed* led, int index, uint8_t multiplier) {
 	leds[index] = led;
 	multipliers[index] = multiplier;
 }
-void LedPalmController::animate() {
+void PalmController::animate() {
 	if(animationStopped) return;
 
 	if(millis() > nextTime){
@@ -35,18 +35,22 @@ void LedPalmController::animate() {
 	}
 
 }
-void LedPalmController::increment(){
+void PalmController::increment(){
 	leds[currentLed]->on();
-	currentLed++;
+	if(++currentLed > 5) {
+		currentLed = 0;
+		ledsOff();
+	}
 }
 
-void LedPalmController::stopAnimation(){
+void PalmController::stopAnimation(){
+	if(animationStopped) return;
 	ledsOff();
 	currentLed = 0;
 	animationStopped = true;
 }
 
-void LedPalmController::startAnimation(){
+void PalmController::startAnimation(){
 	currentLed = 0;
 	animationStopped = false;
 }
