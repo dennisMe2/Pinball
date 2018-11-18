@@ -58,7 +58,7 @@ private:
 	bool replay:1;
 	bool replayUsed:1;
 	void resetReplay();
-	unsigned int hiScore;
+	unsigned int hiScore = 0;
 	int8_t hiScorePlayer =-1;
 };
 

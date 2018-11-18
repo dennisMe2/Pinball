@@ -7,45 +7,50 @@
 
 #include "Switch.h"
 
-Switch::Switch() : PortUser() {
+Switch::Switch() :
+		PortUser() {
 	activeLow = true;
-	trig =false;
-	previousStatus=false;
+	trig = false;
+	previousStatus = false;
 }
 
-Switch::Switch(uint8_t polarity) : PortUser(){
+Switch::Switch(uint8_t polarity) :
+		PortUser() {
 	activeLow = true;
-	trig =false;
-	previousStatus=false;
+	trig = false;
+	previousStatus = false;
 
-	if(polarity == HIGH){
+	if (polarity == HIGH) {
 		activeLow = false;
 	}
 }
 
-bool Switch::on(){
-	if(activeLow){
+bool Switch::on() {
+	if (activeLow) {
 		return !PortUser::getStatus();
 	}
 	return PortUser::getStatus();
 }
 
-void Switch::setStatus(uint8_t stat){
-	//if( (intMillis() - nextChangeTime) > 0 && stat != previousStatus ){
-	if(stat != previousStatus ){
-		PortUser::setStatus(stat);
-		//nextChangeTime = intMillis();
-		previousStatus = stat;
-		//trigger only on rising/falling edges
-		if(activeLow && (stat == LOW)) trig = true;
-		if(!activeLow && (stat == HIGH)) trig = true;
+void Switch::setStatus(uint8_t stat) {
+	if ((intMillis() - nextChangeTime) > 0 && stat != previousStatus) {
+		if (stat != previousStatus) {
+			PortUser::setStatus(stat);
+			nextChangeTime = intMillis() + 30;
+			previousStatus = stat;
+			//trigger only on rising/falling edges
+			if (activeLow && (stat == LOW))
+				trig = true;
+			if (!activeLow && (stat == HIGH))
+				trig = true;
+		}
 	}
 }
 
-void Switch::resetTriggers(){
+void Switch::resetTriggers() {
 	trig = false;
 }
 
-bool Switch::triggered(){
+bool Switch::triggered() {
 	return trig;
 }

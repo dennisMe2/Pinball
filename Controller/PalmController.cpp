@@ -36,11 +36,14 @@ void PalmController::animate() {
 
 }
 void PalmController::increment(){
+	if((millis() - lastActivated) < debounceDelay) return;
+
 	leds[currentLed]->on();
 	if(++currentLed > 5) {
 		currentLed = 0;
 		ledsOff();
 	}
+	lastActivated = millis();
 }
 
 void PalmController::stopAnimation(){

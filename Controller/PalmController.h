@@ -26,6 +26,8 @@ private:
 	SmartLed* leds[5];
 	uint8_t multipliers[5];
 	uint8_t currentLed = 0;
+	unsigned long lastActivated = 0;
+	uint8_t debounceDelay = 255;
 	unsigned long nextTime = 0;
 	unsigned int animationDelay = 15000;
 	bool animationStopped = false;

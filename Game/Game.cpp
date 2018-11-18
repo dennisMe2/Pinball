@@ -109,8 +109,8 @@ void Game::lostBall() {
 	players[activePlayer]->ballsLeft--; //subtract ball from active player
 
 	if(score > hiScore){
-		EEPROM.put(0,hiScore);
 		hiScore = score;
+		EEPROM.put(0, hiScore);
 		newHiScorePlayer = activePlayer;
 		hiScorePlayer = activePlayer;
 	}

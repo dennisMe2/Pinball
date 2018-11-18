@@ -9,7 +9,7 @@
 #define SWITCH_H_
 
 #include "PortUser.h"
-//#include "../Utils.h"
+#include "../Utils.h"
 
 class Switch: public PortUser {
 public:
@@ -21,7 +21,7 @@ public:
 	virtual void setStatus(uint8_t stat);
 
 private:
-	//unsigned int nextChangeTime = 0;
+	unsigned int nextChangeTime = 0;
 	bool activeLow:1;
 	bool trig:1;
 	bool previousStatus:1;
