@@ -11,14 +11,14 @@ Switch::Switch() :
 		PortUser() {
 	activeLow = true;
 	trig = false;
-	previousStatus = false;
+	previousStatus = true;
 }
 
 Switch::Switch(uint8_t polarity) :
 		PortUser() {
 	activeLow = true;
 	trig = false;
-	previousStatus = false;
+	previousStatus = true;
 
 	if (polarity == HIGH) {
 		activeLow = false;
@@ -33,10 +33,10 @@ bool Switch::on() {
 }
 
 void Switch::setStatus(uint8_t stat) {
-	if ((intMillis() - nextChangeTime) > 0 && stat != previousStatus) {
+	if ((intMillis() - lastChangeTime) > 50) {
 		if (stat != previousStatus) {
 			PortUser::setStatus(stat);
-			nextChangeTime = intMillis() + 30;
+			lastChangeTime = intMillis();
 			previousStatus = stat;
 			//trigger only on rising/falling edges
 			if (activeLow && (stat == LOW))

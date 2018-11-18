@@ -17,7 +17,7 @@ public:
 	Solenoid(uint8_t tMaxOn);
 	virtual ~Solenoid(){};
 
-	uint8_t maxOnTime = 20; //milliseconds
+	uint8_t maxOnTime = 25; //milliseconds
 	unsigned int deactivateAfter = 0;
 	virtual void activate();
 	virtual void deactivate();

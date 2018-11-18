@@ -274,6 +274,7 @@ void setup() {
 
 	tilt.activate();
 	Serial.println(F("End Of Boot phase"));
+	delay(100);//prime switch debounce counters;
 }
 
 bool testMode = false;
@@ -311,7 +312,14 @@ void loop() {
 
 	testMode = isTestModeRequested(testMode);
 
-	if ((game.getState() == LOCATE_BALL) || testMode) {
+	if ((game.getState() == RESET)) {
+		dumbLeds.changeColors(CYAN);
+		if (!sw_coinIn.getStatus()) {
+			game.resetHighScore();
+		}
+		game.setState(GAME_OVER);
+
+	}else if ((game.getState() == LOCATE_BALL) || testMode) {
 		if ((loopTime - nextActivationTime) >  500) {
 			switch (testCounter) {
 			case 0:
@@ -365,18 +373,19 @@ void loop() {
 
 	} else if (game.getState() == GAME_OVER) {
 		dumbLeds.changeColors(BLUE);
-
+		game.resetPlayers();
 		palm.setDelay(300); //fast animation
 		palm.startAnimation();
 
 		wheel.setDelay(150);
 		tilt.deactivate();
 
-		dispGame.setFunction(SHOW_INSERT_COIN);
 		dispScore.setFunction(SHOW_INSERT_COIN);
+		dispGame.setFunction(SHOW_HIGH_SCORE);
 
 		//adding a coin adds a player; max = 4 once a game starts no players can be added
 		if (sw_coinIn.triggered()) {
+			dispScore.setFunction(SHOW_NEXT_UP);
 			ballChute.activate();
 			ballLaunched = loopTime;
 			game.setState(COIN_IN);
@@ -390,8 +399,12 @@ void loop() {
 			addPlayer();
 		}
 		//Shooting a ball immediately starts player 1's game with however many players were added
-		if (sw_ballRelease.triggered() && ((loopTime - ballLaunched) > 1000)) {
+		if (!sw_ballRelease.getStatus() && ((loopTime - ballLaunched) > 1500)) {
 			game.setState(FIRST_PLAYER_UP);
+		}
+		if (!sw_ballChute.getStatus()){
+					ballChute.activate();
+					ballLaunched = loopTime;
 		}
 
 		dispGame.setFunction(SHOW_PLAYER);
@@ -408,7 +421,7 @@ void loop() {
 		tilt.deactivate();
 		dumbLeds.changeColors(GREEN);
 		dispGame.setFunction(SHOW_PLAYER);
-		dispScore.setFunction(SHOW_PLAYER);
+		dispScore.setFunction(SHOW_NEXT_UP);
 
 		if (sw_coinIn.triggered()) {
 			ballChute.activate();
@@ -418,8 +431,14 @@ void loop() {
 	} else if (game.getState() == BEFORE_PLAY) {
 		abController.reset();
 		wheel.reset();
+		boat.allOff();
+		palm.ledsOff();
+		dumbLeds.changeColors(MAGENTA);
+		if (sw_ballChute.triggered())
+			ballChute.activate();
 
-		game.setState(PLAYER_PLAYING);
+		if(!sw_ballRelease.getStatus())
+			game.setState(PLAYER_PLAYING);
 
 	} else if (game.getState() == PLAYER_PLAYING) { //GAME ON!
 		wheel.setDelay(1500);
@@ -430,6 +449,7 @@ void loop() {
 		dispScore.setFunction(SHOW_SCORE);
 
 		game.setMultiplier(1);
+		post.postDown();
 
 		if (game.getReplay()) {
 			samePlayerShoots.setColor(RED);
@@ -454,12 +474,10 @@ void loop() {
 
 		if (sw_targetA.triggered()) {
 			(abController.isSetA()) ? game.addScore(100) : game.addScore(10);
-			abController.resetA();
 		}
 
 		if (sw_targetB.triggered()) {
 			(abController.isSetB()) ? game.addScore(100) : game.addScore(10);
-			abController.resetB();
 		}
 
 		if (sw_targetPostUpLeft.triggered()
@@ -473,7 +491,8 @@ void loop() {
 			game.addScore(30);
 		}
 
-		if (sw_islandLeftTop.triggered() || sw_islandLeftBottom.triggered()
+		if (sw_islandLeftTop.triggered()
+				|| sw_islandLeftBottom.triggered()
 				|| sw_islandRightTop.triggered()
 				|| sw_islandRightBottom.triggered()) {
 			game.addScore(1);

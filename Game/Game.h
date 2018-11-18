@@ -23,7 +23,7 @@
 #define TEST_MODE 10
 #define NEW_HISCORE_GAMEOVER 11
 #define NEW_HISCORE_NEXT_PLAYER 12
-
+#define RESET 13
 
 #include <Arduino.h>
 #include <EEPROM.h>
@@ -48,8 +48,10 @@ public:
 	unsigned int getActivePlayer(){return activePlayer;};
 	unsigned int getHiScorePlayer(){return hiScorePlayer;};
 	void setMultiplier(uint8_t multi);
+	void resetHighScore();
+	void resetPlayers(){numberOfPlayers=0;};
 private:
-	uint8_t state = LOCATE_BALL;
+	uint8_t state = RESET;
 	uint8_t multiplier = 1;
 	uint8_t ballCount = 3;
 	uint8_t activePlayer = 0;

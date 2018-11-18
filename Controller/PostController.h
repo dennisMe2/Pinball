@@ -22,6 +22,7 @@ private:
 	BasicLed* led2;
 	Solenoid* up;
 	Solenoid* down;
+	bool isPostUp = true;
 };
 
 #endif /* POSTCONTROLLER_H_ */

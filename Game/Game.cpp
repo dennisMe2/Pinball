@@ -18,10 +18,15 @@ Game::Game(int ballC, Player* player1, Player* player2, Player* player3, Player*
 	resetReplay();
 	EEPROM.get(0, hiScore);
 	if (hiScore > 9999) hiScore = 0;
+	state = RESET;
 }
 
 void Game::setMultiplier(uint8_t multi) {
 	multiplier = multi;
+}
+
+void Game::resetHighScore() {
+	EEPROM.put(0,(unsigned int) 0);
 }
 
 uint8_t Game::getState(){

@@ -21,7 +21,7 @@ public:
 	virtual void setStatus(uint8_t stat);
 
 private:
-	unsigned int nextChangeTime = 0;
+	unsigned int lastChangeTime = 0;
 	bool activeLow:1;
 	bool trig:1;
 	bool previousStatus:1;

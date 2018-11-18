@@ -15,6 +15,7 @@ void PalmController::ledsOff() {
 	for (int i = 0; i < 5; i++) {
 		leds[i]->off();
 	}
+	currentLed = 0;
 }
 void PalmController::addLed(SmartLed* led, int index, uint8_t multiplier) {
 	leds[index] = led;
@@ -35,6 +36,7 @@ void PalmController::animate() {
 	}
 
 }
+
 void PalmController::increment(){
 	if((millis() - lastActivated) < debounceDelay) return;
 

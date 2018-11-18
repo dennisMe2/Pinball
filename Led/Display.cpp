@@ -33,21 +33,13 @@ void Display::refreshDisplay() {
 
 	switch (function) {
 	case SHOW_INSERT_COIN:
-		if (++nextSegmentIndex > 6)
+		if (++nextSegmentIndex > 2)
 			nextSegmentIndex = 0;
 		if (nextSegmentIndex == 0)
 			TM1637Display::setSegments(SEG_INS);
 		if (nextSegmentIndex == 1)
 			TM1637Display::setSegments(SEG_COIN);
 		if (nextSegmentIndex == 2)
-			TM1637Display::setSegments(SEG_OFF);
-		if (nextSegmentIndex == 3)
-			TM1637Display::setSegments(SEG_HIGH);
-		if (nextSegmentIndex == 4)
-			TM1637Display::setSegments(SEG_SCOR);
-		if (nextSegmentIndex == 5)
-			TM1637Display::showNumberDec(gamePointer->getHiScore(), false, 4, 0);
-		if (nextSegmentIndex == 6)
 			TM1637Display::setSegments(SEG_OFF);
 
 		nextSegmentTime = millis() + period;
@@ -86,6 +78,11 @@ void Display::refreshDisplay() {
 			TM1637Display::showNumberDec(gamePointer->getBalls(), false, 1, 3);
 			nextSegmentTime = millis() + refresh;
 			break;
+	case SHOW_NEXT_UP:
+				TM1637Display::showNumberDec(gamePointer->getActivePlayer() + 1, false, 1, 0);
+				TM1637Display::setSegments(SEG_UP, 3,1);
+				nextSegmentTime = millis() + refresh;
+				break;
 	case SHOW_HISCORE_PLAYER:
 
 				TM1637Display::setSegments(SEG_PLAYER_UP_A, 1,0);

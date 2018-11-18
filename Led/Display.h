@@ -18,6 +18,7 @@
 #define SHOW_PLAYER_UP 6
 #define SHOW_SWITCHES 7
 #define SHOW_HISCORE_PLAYER 8
+#define SHOW_NEXT_UP 9
 
 
 #include "Arduino.h"
@@ -50,6 +51,12 @@ public:
 		SEG_E | SEG_G | SEG_C ,   							// n
 		SEG_A | SEG_F | SEG_G | SEG_C | SEG_D | SEG_DP, 	// S.
 		0
+	};
+
+	const uint8_t SEG_UP[3] = {
+		SEG_G ,       							            // -
+		SEG_F | SEG_B | SEG_E | SEG_C | SEG_D ,				// U
+		SEG_A | SEG_F | SEG_B | SEG_G | SEG_E		    	// P
 	};
 
 	const uint8_t SEG_COIN[4] = {
