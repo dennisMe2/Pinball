@@ -12,8 +12,9 @@
 DelayedKickOut::DelayedKickOut() : Solenoid() {
 
 }
-DelayedKickOut::DelayedKickOut(unsigned int delayMaxMs) : Solenoid() {
+DelayedKickOut::DelayedKickOut(unsigned int delayMaxMs, uint8_t maxActive) : Solenoid() {
 	maxDelay = delayMaxMs;
+	maxOnTime = maxActive;
 }
 
 void DelayedKickOut::setWheelController(WheelController* wheelController){

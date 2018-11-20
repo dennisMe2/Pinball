@@ -12,6 +12,8 @@ PostController::PostController(BasicLed* led1, BasicLed* led2, Solenoid* up, Sol
 	this->led2 = led2;
 	this->up = up;
 	this->down = down;
+	down->activate();
+	isPostUp = false;
 }
 
 void PostController::postUp(){
@@ -23,7 +25,7 @@ void PostController::postUp(){
 	isPostUp = true;
 }
 void PostController::postDown(){
-	if (! isPostUp) return;
+	if (!isPostUp) return;
 
 	led1->setColor(BLACK);
 	led2->setColor(BLACK);

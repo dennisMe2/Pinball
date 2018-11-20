@@ -14,7 +14,7 @@
 class DelayedKickOut: public Solenoid {
 public:
 	DelayedKickOut();
-	DelayedKickOut(unsigned int delayMaxMs);
+	DelayedKickOut(unsigned int delayMaxMs, uint8_t maxActive);
 	virtual void activate();
 	virtual void checkDelayedActivation();
 	void activateImmediate();

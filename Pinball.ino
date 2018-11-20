@@ -1,24 +1,31 @@
 #include "Arduino.h"
 #include <Adafruit_NeoPixel.h>
 #include "SoftwareSerial.h"
-#include "DFRobotDFPlayerMini.h"
 
 #include "Controller/ABController.h"
 #include "Controller/BasicLedController.h"
 #include "Controller/BoatController.h"
 #include "Controller/PalmController.h"
-#include "Game/Game.h"
-#include "Game/Player.h"
-#include "Led/Display.h"
-#include "Led/SmartLed.h"
-#include "Utils.h"
-#include "Logic/PortExpander.h"
-#include "Logic/Switch.h"
-#include "Power/DelayedKickOut.h"
-#include "Power/Solenoid.h"
 #include "Controller/PostController.h"
 #include "Controller/WheelController.h"
+
+#include "Game/Game.h"
+#include "Game/Player.h"
+#include "Game/Sound.h"
+
+#include "Led/Display.h"
+#include "Led/SmartLed.h"
 #include "Led/BasicLed.h"
+
+#include "Utils.h"
+
+#include "Logic/PortExpander.h"
+#include "Logic/Switch.h"
+
+#include "Power/DelayedKickOut.h"
+#include "Power/Solenoid.h"
+
+
 
 #define LED_PIN 6
 
@@ -33,7 +40,8 @@ uint8_t litPixel = 0;
 unsigned long loopTime = 0;
 
 SoftwareSerial softSerial(7, 8); // arduino RX, TX
-DFRobotDFPlayerMini mP3;
+
+Sound sound = Sound();
 
 Display dispScore(CLK1, DIO1);
 Display dispGame(CLK2, DIO2);
@@ -136,13 +144,13 @@ Switch sw_ballRelease = Switch();
 Switch sw_ballChute = Switch();
 Switch sw_coinIn = Switch();
 
-DelayedKickOut kickOutTop = DelayedKickOut(3500);
+DelayedKickOut kickOutTop = DelayedKickOut(3500, 13);
 Solenoid kickerTopLeft = Solenoid();
 Solenoid kickerTopRight = Solenoid();
 Solenoid kickerBottomLeft = Solenoid();
 Solenoid kickerBottomRight = Solenoid();
-DelayedKickOut kickOutLeft = DelayedKickOut(7000);
-DelayedKickOut kickOutRight = DelayedKickOut(7000);
+DelayedKickOut kickOutLeft = DelayedKickOut(7000, 17);
+DelayedKickOut kickOutRight = DelayedKickOut(7000, 17);
 Solenoid postUp = Solenoid();
 Solenoid postDown = Solenoid();
 Solenoid replayGate = Solenoid(255);
@@ -258,13 +266,14 @@ void setup() {
 	strip.setBrightness(255);
 	strip.show();
 
-	if (!mP3.begin(softSerial)) {  //Use softwareSerial to communicate with mp3.
+	if (!sound.begin(softSerial)) {  //Use softwareSerial to communicate with mp3.
 		Serial.println(F("Unable to use MP3:"));
 		Serial.println(F("Please insert the SD card!"));
 	}
 
-	mP3.volume(30);
-	mP3.play(1);
+	sound.volume(30);
+	sound.play(FOG_HORN);
+
 
 	dispScore.setBrightness(0x02);
 	dispScore.setGame(&game);
@@ -297,7 +306,7 @@ bool isTestModeRequested(bool testMode) {
 
 void addPlayer() {
 	game.addPlayer();
-	mP3.play(3);
+	sound.play(SOUND_COIN_IN);
 }
 
 
@@ -317,7 +326,9 @@ void loop() {
 		if (!sw_coinIn.getStatus()) {
 			game.resetHighScore();
 		}
-		game.setState(GAME_OVER);
+
+		// EXIT CURRENT STATE BELOW HERE
+		game.setState(LOCATE_BALL);
 
 	}else if ((game.getState() == LOCATE_BALL) || testMode) {
 		if ((loopTime - nextActivationTime) >  500) {
@@ -364,6 +375,7 @@ void loop() {
 				tilt.activate();
 				break;
 			}
+			// EXIT CURRENT STATE BELOW HERE
 			if (++testCounter > 12){
 				testCounter = 0;
 				game.setState(GAME_OVER);
@@ -376,6 +388,7 @@ void loop() {
 		game.resetPlayers();
 		palm.setDelay(300); //fast animation
 		palm.startAnimation();
+		sound.play(TUNE_GAME_OVER);
 
 		wheel.setDelay(150);
 		tilt.deactivate();
@@ -383,6 +396,7 @@ void loop() {
 		dispScore.setFunction(SHOW_INSERT_COIN);
 		dispGame.setFunction(SHOW_HIGH_SCORE);
 
+		// EXIT CURRENT STATE BELOW HERE
 		//adding a coin adds a player; max = 4 once a game starts no players can be added
 		if (sw_coinIn.triggered()) {
 			dispScore.setFunction(SHOW_NEXT_UP);
@@ -394,28 +408,33 @@ void loop() {
 
 	} else if (game.getState() == COIN_IN) {
 		dumbLeds.changeColors(YELLOW);
+		dispGame.setFunction(SHOW_PLAYER);
+		dispScore.setFunction(SHOW_NUM_PLAYERS);
 
 		if (sw_coinIn.triggered()) {
 			addPlayer();
 		}
-		//Shooting a ball immediately starts player 1's game with however many players were added
-		if (!sw_ballRelease.getStatus() && ((loopTime - ballLaunched) > 1500)) {
-			game.setState(FIRST_PLAYER_UP);
-		}
+
 		if (!sw_ballChute.getStatus()){
 					ballChute.activate();
 					ballLaunched = loopTime;
 		}
 
-		dispGame.setFunction(SHOW_PLAYER);
-		dispScore.setFunction(SHOW_NUM_PLAYERS);
+		// EXIT CURRENT STATE BELOW HERE
+		//Shooting a ball immediately starts player 1's game with however many players were added
+		if (!sw_ballRelease.getStatus() && ((loopTime - ballLaunched) > 1500)) {
+			game.setState(FIRST_PLAYER_UP);
+		}
 
 	} else if (game.getState() == FIRST_PLAYER_UP) {
+		// EXIT CURRENT STATE BELOW HERE
 		game.setState(BEFORE_PLAY);
 
 	} else if (game.getState() == PLAY_AGAIN) { //immediate replay without loss of achievements
 		ballChute.activate();
-		game.setState(PLAYER_PLAYING);
+
+		// EXIT CURRENT STATE BELOW HERE
+		game.setState(PLAYER_PLAYING); // AUTO
 
 	} else if (game.getState() == PLAYER_UP) {
 		tilt.deactivate();
@@ -423,6 +442,7 @@ void loop() {
 		dispGame.setFunction(SHOW_PLAYER);
 		dispScore.setFunction(SHOW_NEXT_UP);
 
+		// EXIT CURRENT STATE BELOW HERE
 		if (sw_coinIn.triggered()) {
 			ballChute.activate();
 			game.setState(BEFORE_PLAY);
@@ -437,7 +457,9 @@ void loop() {
 		if (sw_ballChute.triggered())
 			ballChute.activate();
 
+		// EXIT CURRENT STATE BELOW HERE
 		if(!sw_ballRelease.getStatus())
+			post.postDown();
 			game.setState(PLAYER_PLAYING);
 
 	} else if (game.getState() == PLAYER_PLAYING) { //GAME ON!
@@ -449,7 +471,6 @@ void loop() {
 		dispScore.setFunction(SHOW_SCORE);
 
 		game.setMultiplier(1);
-		post.postDown();
 
 		if (game.getReplay()) {
 			samePlayerShoots.setColor(RED);
@@ -462,27 +483,33 @@ void loop() {
 
 		if (sw_rollOver_100.triggered()) {
 			game.addScore(100);
+			sound.play(CHIME_MED);
 		}
 
 		if (sw_rollOverA.triggered()) {
 			abController.setA();
+			sound.play(CHIME_LOW);
 		}
 
 		if (sw_rollOverB.triggered()) {
 			abController.setB();
+			sound.play(CHIME_LOW);
 		}
 
 		if (sw_targetA.triggered()) {
+			sound.play(CHIME_LOW);
 			(abController.isSetA()) ? game.addScore(100) : game.addScore(10);
 		}
 
 		if (sw_targetB.triggered()) {
+			sound.play(CHIME_LOW);
 			(abController.isSetB()) ? game.addScore(100) : game.addScore(10);
 		}
 
 		if (sw_targetPostUpLeft.triggered()
 				|| sw_targetPostUpRight.triggered()) {
 			post.postUp();
+			sound.play(CHIME_LOW);
 		}
 
 		if (sw_targetPostDownLeft.triggered()
@@ -491,12 +518,16 @@ void loop() {
 			game.addScore(30);
 		}
 
+		//a bunch of one point switches
 		if (sw_islandLeftTop.triggered()
 				|| sw_islandLeftBottom.triggered()
 				|| sw_islandRightTop.triggered()
-				|| sw_islandRightBottom.triggered()) {
+				|| sw_islandRightBottom.triggered()
+				|| sw_sideLeft.triggered()
+				|| sw_sideRight.triggered()){
 			game.addScore(1);
 			post.postDown();
+			sound.play(CHIME_HIGH);
 		}
 
 		if (sw_kickOutTop.triggered()) {
@@ -506,25 +537,25 @@ void loop() {
 		}
 
 		if (sw_kickerTopLeft.triggered()) {
-			mP3.play(1);
+			sound.play(CHIME_LOW);
 			game.addScore(palm.getMultiplier() * (abController.isSetB()) ? 10 : 1);
 			kickerTopLeft.activate();
 		}
 
 		if (sw_kickerTopRight.triggered()) {
-			mP3.play(1);
+			sound.play(CHIME_LOW);
 			kickerTopRight.activate();
 			game.addScore(palm.getMultiplier() * (abController.isSetA()) ? 10 : 1);
 		}
 
 		if (sw_kickerBottomRight.triggered()) {
-			mP3.play(1);
+			sound.play(CHIME_LOW);
 			game.addScore(palm.getMultiplier() * (abController.isSetB()) ? 10 : 1);
 			kickerBottomRight.activate();
 		}
 
 		if (sw_kickerBottomLeft.triggered()) {
-			mP3.play(1);
+			sound.play(CHIME_LOW);
 			game.addScore(palm.getMultiplier() * (abController.isSetA()) ? 10 : 1);
 			kickerBottomLeft.activate();
 		}
@@ -541,34 +572,34 @@ void loop() {
 
 		if (sw_rollOverPassRight.triggered()) {
 			game.addScore(wheel.getPoints());
+			sound.play(BELL_LOW);
 			if(abController.isSetA() && abController.isSetB()) replayGate.activate();
 		}
 
 		if (sw_rollOverPassLeft.triggered()) {
 			game.addScore(wheel.getPoints());
+			sound.play(AMBIENT_WAVES);
 		}
 
+		// EXIT CURRENT STATE BELOW HERE
 		//someone banged the board, big trouble!
-		if (sw_tilt.triggered()) {
+		if (sw_tilt.triggered()) {  //TO TILT STATE
 			game.setMultiplier(0);
 			game.setState(TILT);
 			post.postDown();
-			mP3.play(2);
+			sound.play(FOG_HORN);
 		}
 
 		//player lost ball; continue with next player or game over
-		if (sw_ballChute.triggered()) {
+		if (sw_ballChute.triggered()) { //STATE: NEW_HISCORE_GAMEOVER || NEW_HISCORE_NEXT_PLAYER ||GAME_OVER
 			game.lostBall();
+			post.postDown();
 		}
 
 	} else if (game.getState() == TILT) {
 		palm.stopAnimation();
 		tilt.deactivate();
 		dumbLeds.changeColors(RED);
-
-		if (sw_ballChute.triggered()) {
-			game.lostBall();
-		}
 
 		//important ball doesn't end up hanging in a kickout forever
 		if (sw_kickOutTop.triggered()) {
@@ -583,15 +614,26 @@ void loop() {
 			kickOutRight.activateImmediate();
 		}
 
+		// EXIT CURRENT STATE BELOW HERE
+		if (sw_ballChute.triggered()) {
+			game.lostBall();//STATE: NEW_HISCORE_GAMEOVER || NEW_HISCORE_NEXT_PLAYER ||GAME_OVER
+		}
+
 	} else if (game.getState() == NEW_HISCORE_GAMEOVER){
 		dispGame.setFunction(SHOW_HISCORE_PLAYER);
 		dispScore.setFunction(SHOW_HIGH_SCORE);
+		sound.play(TUNE_HISCORE);
+
+		// EXIT CURRENT STATE BELOW HERE
 		if (sw_coinIn.triggered()) {
 			game.setState(GAME_OVER);
 		}
 	} else if (game.getState() == NEW_HISCORE_NEXT_PLAYER){
 		dispGame.setFunction(SHOW_HISCORE_PLAYER);
 		dispScore.setFunction(SHOW_HIGH_SCORE);
+		sound.play(TUNE_HISCORE);
+
+		// EXIT CURRENT STATE BELOW HERE
 		if (sw_coinIn.triggered()) {
 			game.setState(PLAYER_UP);
 		}
