@@ -38,6 +38,7 @@
 
 uint8_t litPixel = 0;
 unsigned long loopTime = 0;
+//unsigned long previousLoopTime = 0;
 
 SoftwareSerial softSerial(7, 8); // arduino RX, TX
 
@@ -311,8 +312,10 @@ void addPlayer() {
 
 
 unsigned long ballLaunched = 0;
+uint8_t sw_count = 10;
 
 void loop() {
+	//previousLoopTime = loopTime;
 	loopTime = millis();
 
 	//start by getting the latest switch input values
@@ -469,6 +472,7 @@ void loop() {
 
 		dispGame.setFunction(SHOW_PLAYER_UP);
 		dispScore.setFunction(SHOW_SCORE);
+		//dispScore.showLoopTime(loopTime - previousLoopTime);
 
 		game.setMultiplier(1);
 
@@ -591,9 +595,16 @@ void loop() {
 		}
 
 		//player lost ball; continue with next player or game over
-		if (sw_ballChute.triggered()) { //STATE: NEW_HISCORE_GAMEOVER || NEW_HISCORE_NEXT_PLAYER ||GAME_OVER
-			game.lostBall();
-			post.postDown();
+		// this switch is prone to generating spikes which abruptly end a game,
+		//so we handle it differently because response time is not important here
+		if (!sw_ballChute.getStatus()) {
+			if (--sw_count == 0){
+				game.lostBall(); //STATE: NEW_HISCORE_GAMEOVER || NEW_HISCORE_NEXT_PLAYER ||GAME_OVER
+				post.postDown();
+				sw_count = 10;
+			}
+		}else{
+			sw_count = 10;
 		}
 
 	} else if (game.getState() == TILT) {

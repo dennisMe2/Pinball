@@ -19,6 +19,7 @@
 #define SHOW_SWITCHES 7
 #define SHOW_HISCORE_PLAYER 8
 #define SHOW_NEXT_UP 9
+#define SHOW_LOOP_TIME 10
 
 
 #include "Arduino.h"
@@ -92,6 +93,7 @@ public:
 	void showSwitches(unsigned int switches);
 	void setFunction(int function);
 	void setGame(Game* gamePtr);
+	void showLoopTime(unsigned int time);
 
 private:
 	Game* gamePointer = 0;
@@ -101,6 +103,7 @@ private:
 	unsigned int period = 600;
 	unsigned int refresh = 500; //10Hz refresh rate
 	unsigned int switchData = 0;
+	unsigned int loopTime = 0;
 };
 
 #endif /* DISPLAY_H_ */
