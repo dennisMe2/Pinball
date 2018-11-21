@@ -4,16 +4,6 @@
  *  Created on: Nov 20, 2018
  *      Author: dennis
  */
-//001.wav = HighChime 44,1 kHz
-//002.wav = MedChime 44,1
-//003.mp3 = sailboat side microphone
-//004.mp3 = coin in arcade
-//005.mp3 = ambient shore waves
-//006.mp3 = very deep bell
-//007.mp3 = foghorn
-//008.mp3 = hiscore tune
-//009.mp3 = gameOver guitar
-//010.mp3 = LowChime 44,1
 
 #define CHIME_HIGH 1
 #define CHIME_MED 2

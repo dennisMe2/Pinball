@@ -484,7 +484,6 @@ void loop() {
 
 		tilt.activate();
 
-
 		if (sw_rollOver_100.triggered()) {
 			game.addScore(100);
 			sound.play(CHIME_MED);
