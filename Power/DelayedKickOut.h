@@ -18,11 +18,13 @@ public:
 	virtual void activate();
 	virtual void checkDelayedActivation();
 	void activateImmediate();
+	bool isInUse();
 	void setWheelController(WheelController* wheelController);
 private:
 	unsigned int activationStart = 0;
 	unsigned int maxDelay = 2000;
 	WheelController* wheel = 0;
+	bool isWaitingToFire = false;
 
 };
 
