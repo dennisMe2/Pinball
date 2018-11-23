@@ -33,17 +33,21 @@ bool Switch::on() {
 }
 
 void Switch::setStatus(uint8_t stat) {
-	if ((intMillis() - lastChangeTime) > 50) {
-		if (stat != previousStatus) {
-			PortUser::setStatus(stat);
-			lastChangeTime = intMillis();
-			previousStatus = stat;
-			//trigger only on rising/falling edges
-			if (activeLow && (stat == LOW))
-				trig = true;
-			if (!activeLow && (stat == HIGH))
-				trig = true;
-		}
+	if (stat == previousStatus) return;
+
+	if (--transientDelay == 0 && ((intMillis() - lastChangeTime) > 50) ) {
+
+		PortUser::setStatus(stat);
+		lastChangeTime = intMillis();
+		previousStatus = stat;
+
+		//trigger only on rising/falling edges
+		if (activeLow && (stat == LOW))
+			trig = true;
+		if (!activeLow && (stat == HIGH))
+			trig = true;
+
+		transientDelay = TRANSIENT_DELAY;
 	}
 }
 

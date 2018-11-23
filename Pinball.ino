@@ -264,12 +264,9 @@ void setup() {
 	strip.setBrightness(255);
 	strip.show();
 
-	if (!sound.begin(softSerial)) { //Use softwareSerial to communicate with mp3.
-		Serial.println(F("Unable to use MP3:"));
-		Serial.println(F("Please insert the SD card!"));
-	}
+	sound.begin(softSerial);
 
-	sound.volume(30);
+	sound.volume(0x30);
 	sound.play(FOG_HORN);
 
 	dispScore.setBrightness(0x02);

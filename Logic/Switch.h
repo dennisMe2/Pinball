@@ -7,6 +7,7 @@
 
 #ifndef SWITCH_H_
 #define SWITCH_H_
+#define TRANSIENT_DELAY 3
 
 #include "PortUser.h"
 #include "../Utils.h"
@@ -22,9 +23,11 @@ public:
 
 private:
 	unsigned int lastChangeTime = 0;
+	uint8_t transientDelay = TRANSIENT_DELAY;
 	bool activeLow:1;
 	bool trig:1;
 	bool previousStatus:1;
+
 };
 
 #endif /* SWITCH_H_ */

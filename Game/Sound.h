@@ -16,21 +16,21 @@
 #define TUNE_HISCORE 8
 #define TUNE_GAME_OVER 9
 
-
-
 #ifndef SOUND_H_
 #define SOUND_H_
+#include <Arduino.h>
 
-#include "DFRobotDFPlayerMini.h"
-
-class Sound : public DFRobotDFPlayerMini {
+class Sound {
 public:
 	Sound();
 	void playFolder(uint8_t folder, uint8_t number);
 	void play(uint8_t number);
+	void begin(Stream &stream);
+	void volume(uint8_t vol);
 private:
 	uint8_t lastSound = 0;
-
+	Stream* mySerial = 0;
+	void dfpExecute(uint8_t CMD, uint8_t Par1, uint8_t Par2);
 	bool isRepeatable(uint8_t number);
 };
 
