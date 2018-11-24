@@ -28,6 +28,7 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 #include "../Game/Player.h"
+#include "../Sound/MechSound.h"
 
 
 class Game {
@@ -50,6 +51,7 @@ public:
 	void setMultiplier(uint8_t multi);
 	void resetHighScore();
 	void resetPlayers(){numberOfPlayers=0;};
+	void setMechSound(MechSound* mechSound);
 private:
 	uint8_t state = RESET;
 	uint8_t multiplier = 1;
@@ -62,6 +64,7 @@ private:
 	void resetReplay();
 	unsigned int hiScore = 0;
 	int8_t hiScorePlayer =-1;
+	MechSound* mechSound = 0;
 };
 
 #endif /* GAME_H_ */

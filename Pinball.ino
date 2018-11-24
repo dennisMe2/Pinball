@@ -21,9 +21,11 @@
 #include "Logic/PortExpander.h"
 #include "Logic/PortUser.h"
 #include "Logic/Switch.h"
+#include "Sound/MechSound.h"
 #include "Power/DelayedKickOut.h"
 #include "Sound/Sound.h"
 #include "Utils.h"
+
 
 #define LED_PIN 6
 
@@ -150,10 +152,10 @@ Solenoid kickerBottomRight = Solenoid();
 DelayedKickOut kickOutLeft = DelayedKickOut(7000, 17);
 DelayedKickOut kickOutRight = DelayedKickOut(7000, 17);
 Solenoid postUp = Solenoid(100);
-Solenoid postDown = Solenoid(6);
+Solenoid postDown = Solenoid(10);
 Solenoid replayGate = Solenoid(255);
 Solenoid ballChute = Solenoid();
-Solenoid spare = Solenoid();
+Solenoid knocker = Solenoid();
 Solenoid tilt = Solenoid(0); // normally on!
 
 BoatController boat = BoatController(&yellow, &green, &blue, &red);
@@ -162,6 +164,7 @@ ABController abController = ABController(&a, &b, &topLeftKicker,
 		&topRightKicker, &bottomLeftKicker, &bottomRightKicker);
 PostController post = PostController(&postUpper, &postLower, &postUp,
 		&postDown);
+MechSound mechSound = MechSound(&knocker);
 
 void setup() {
 	Serial.begin(9600);
@@ -215,7 +218,7 @@ void setup() {
 	driverBank.addSolenoid(&postDown, 8);
 	driverBank.addSolenoid(&replayGate, 9);
 	driverBank.addSolenoid(&ballChute, 10);
-	driverBank.addSolenoid(&spare, 11);
+	driverBank.addSolenoid(&knocker, 11);
 	driverBank.addSolenoid(&tilt, 12);
 	driverBank.begin();
 
@@ -255,8 +258,15 @@ void setup() {
 	switchBank2.addSwitch(&sw_coinIn, 11);
 	switchBank2.begin();
 
+	kickOutTop.setMechSound(&mechSound);
+
 	kickOutLeft.setWheelController(&wheel);
+	kickOutLeft.setMechSound(&mechSound);
+
 	kickOutRight.setWheelController(&wheel);
+	kickOutRight.setMechSound(&mechSound);
+
+	game.setMechSound(&mechSound);
 
 	softSerial.begin(9600);
 
@@ -365,7 +375,7 @@ void loop() {
 				ballChute.activate();
 				break;
 			case 11:
-				spare.activate();
+				knocker.activate();
 				break;
 			case 12:			//you may want to hold a flipper for this one!
 				tilt.activate();
@@ -527,12 +537,14 @@ void loop() {
 		else if (sw_targetPostUpLeft.triggered()
 				|| sw_targetPostUpRight.triggered()) {
 			post.postUp();
+			mechSound.rattle(10);
 			sound.play(CHIME_LOW);
 		}
 
 		else if (sw_targetPostDownLeft.triggered()
 				|| sw_targetPostDownRight.triggered()) {
 			post.postDown();
+			mechSound.rattle(10);
 			game.addScore(30);
 		}
 
@@ -542,6 +554,7 @@ void loop() {
 				|| sw_islandRightBottom.triggered() || sw_sideLeft.triggered()
 				|| sw_sideRight.triggered()) {
 			game.addScore(1);
+			mechSound.rattle(3);
 			post.postDown();
 			sound.play(CHIME_HIGH);
 		}
@@ -674,6 +687,7 @@ void loop() {
 	wheel.animate();
 
 	sound.processCommands();
+	mechSound.updateSound();
 
 	// end of cycle tasks, refreshing i/o and displays etc
 	driverBank.refreshOutputs();

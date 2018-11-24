@@ -22,9 +22,14 @@ void DelayedKickOut::setWheelController(WheelController* wheelController){
 	wheel = wheelController;
 }
 
+void DelayedKickOut::setMechSound(MechSound* mechSound){
+	this->mechSound = mechSound;
+}
+
+
 void DelayedKickOut::activate(){
 	if (isWaitingToFire) return;
-
+	mechSound->rattle(200);
 	activationStart = intMillis() + random(500, maxDelay);
 	if(wheel !=0) wheel->pause();
 	isWaitingToFire = true;
@@ -37,6 +42,7 @@ bool DelayedKickOut::isInUse(){
 void DelayedKickOut::activateImmediate(){
 	isWaitingToFire = false;
 	activationStart = 0;
+	mechSound->stop();
 	Solenoid::activate();
 	if(wheel !=0) wheel->unPause();
 }

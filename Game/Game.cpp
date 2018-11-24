@@ -21,6 +21,10 @@ Game::Game(int ballC, Player* player1, Player* player2, Player* player3, Player*
 	state = RESET;
 }
 
+void Game::setMechSound(MechSound* mechSound){
+	this->mechSound = mechSound;
+}
+
 void Game::setMultiplier(uint8_t multi) {
 	multiplier = multi;
 }
@@ -56,21 +60,26 @@ void Game::update(){
 
 void Game::addScore(uint8_t points) {
 
+	mechSound->rattle(points * multiplier);
+
 	players[activePlayer]->score += points * multiplier;
 
 	if (players[activePlayer]->score >= 2300 && players[activePlayer]->bonusBalls == 0) {
 		players[activePlayer]->ballsLeft++;
 		players[activePlayer]->bonusBalls++;
+		mechSound->knock(5);
 	}
 
 	if (players[activePlayer]->score >= 4000 && players[activePlayer]->bonusBalls == 1) {
 		players[activePlayer]->ballsLeft++;
 		players[activePlayer]->bonusBalls++;
+		mechSound->knock(5);
 	}
 
 	if (players[activePlayer]->score >= 7000 && players[activePlayer]->bonusBalls == 2) {
 		players[activePlayer]->ballsLeft++;
 		players[activePlayer]->bonusBalls++;
+		mechSound->knock(5);
 	}
 
 	if(players[activePlayer]->score > hiScore){
@@ -92,6 +101,7 @@ unsigned int Game::getNumPlayers(){
 
 void Game::setReplay(){
 	replay = true;
+	mechSound->knock(5);
 }
 
 unsigned int Game::getHiScore(){
@@ -108,6 +118,7 @@ void Game::lostBall() {
 		replay = false;
 		state = PLAY_AGAIN;
 		replayUsed = true;
+		mechSound->knock(5);
 		return;
 	}
 
