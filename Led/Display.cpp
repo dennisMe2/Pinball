@@ -28,7 +28,7 @@ void Display::showSwitches(unsigned int switches) {
 	switchData = switches;
 }
 
-void Display::showLoopTime(unsigned int time){
+void Display::showLoopTime(unsigned int time) {
 	function = SHOW_LOOP_TIME;
 	loopTime = time;
 }
@@ -56,6 +56,17 @@ void Display::refreshDisplay() {
 			TM1637Display::showNumberDec(gamePointer->getScore(), false, 4, 0);
 			nextSegmentTime = millis() + refresh;
 		}
+		break;
+	case SHOW_TILT:
+		if (++nextSegmentIndex > 1)
+			nextSegmentIndex = 0;
+
+		if (nextSegmentIndex == 0)
+			TM1637Display::setSegments(SEG_TILT);
+		if (nextSegmentIndex == 1)
+			TM1637Display::setSegments(SEG_OFF);
+		nextSegmentTime = millis() + 250;
+
 		break;
 
 	case SHOW_HIGH_SCORE:

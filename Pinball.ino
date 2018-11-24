@@ -15,7 +15,6 @@
 #include "Controller/WheelController.h"
 #include "Game/Game.h"
 #include "Game/Player.h"
-#include "Game/Sound.h"
 #include "Led/BasicLed.h"
 #include "Led/Display.h"
 #include "Led/SmartLed.h"
@@ -23,6 +22,7 @@
 #include "Logic/PortUser.h"
 #include "Logic/Switch.h"
 #include "Power/DelayedKickOut.h"
+#include "Sound/Sound.h"
 #include "Utils.h"
 
 #define LED_PIN 6
@@ -149,8 +149,8 @@ Solenoid kickerBottomLeft = Solenoid();
 Solenoid kickerBottomRight = Solenoid();
 DelayedKickOut kickOutLeft = DelayedKickOut(7000, 17);
 DelayedKickOut kickOutRight = DelayedKickOut(7000, 17);
-Solenoid postUp = Solenoid();
-Solenoid postDown = Solenoid();
+Solenoid postUp = Solenoid(100);
+Solenoid postDown = Solenoid(6);
 Solenoid replayGate = Solenoid(255);
 Solenoid ballChute = Solenoid();
 Solenoid spare = Solenoid();
@@ -287,19 +287,10 @@ bool testMode = false;
 int testModeCounter = 0;
 
 uint8_t testCounter = 0;
+int swTestCtr = 2000;
+
 unsigned long nextActivationTime = 0;
 
-bool isTestModeRequested(bool testMode) {
-	if (!sw_coinIn.getStatus()) {  //switch pushed
-		if (++testModeCounter > 2000) {
-			testMode = !testMode;
-			testModeCounter = 0;
-		}
-	} else {
-		testModeCounter = 0;
-	}
-	return testMode;
-}
 
 void addPlayer() {
 	game.addPlayer();
@@ -326,8 +317,6 @@ void loop() {
 	switchBank1.refreshInputs();
 	switchBank2.refreshInputs();
 
-	testMode = isTestModeRequested(testMode);
-
 	if ((game.getState() == RESET)) {
 		dumbLeds.changeColors(CYAN);
 		if (!sw_coinIn.getStatus()) {
@@ -337,7 +326,7 @@ void loop() {
 		// EXIT CURRENT STATE BELOW HERE
 		game.setState(LOCATE_BALL);
 
-	} else if ((game.getState() == LOCATE_BALL) || testMode) {
+	} else if ((game.getState() == LOCATE_BALL) || game.getState() == TEST_MODE) {
 		if ((loopTime - nextActivationTime) > 500) {
 			switch (testCounter) {
 			case 0:
@@ -383,10 +372,20 @@ void loop() {
 				break;
 			}
 			// EXIT CURRENT STATE BELOW HERE
-			if (++testCounter > 12) {
+			if (game.getState() == LOCATE_BALL && ++testCounter > 12) {
 				testCounter = 0;
 				game.setState(GAME_OVER);
 			}
+
+			if (!sw_coinIn.getStatus()) {
+				if (--swTestCtr == 0) {
+					game.setState(GAME_OVER);
+					swTestCtr = 2000;
+				}
+			} else {
+				swTestCtr = 2000;
+			}
+
 			nextActivationTime = loopTime;
 		}
 
@@ -413,6 +412,14 @@ void loop() {
 			ballLaunched = loopTime;
 			game.setState(COIN_IN);
 			addPlayer();
+		}
+		if (!sw_coinIn.getStatus()) {
+			if (--swTestCtr == 0) {
+				game.setState(TEST_MODE);
+				swTestCtr = 2000;
+			}
+		} else {
+			swTestCtr = 2000;
 		}
 
 	} else if (game.getState() == COIN_IN) {
@@ -451,7 +458,7 @@ void loop() {
 		dispGame.setFunction(SHOW_PLAYER);
 		dispScore.setFunction(SHOW_NEXT_UP);
 		sound.volume(0x18);
-		sound.play(AMBIENT_WAVES);
+		sound.play(AMBIENT_BOAT);
 
 		// EXIT CURRENT STATE BELOW HERE
 		if (sw_coinIn.triggered()) {
@@ -585,14 +592,14 @@ void loop() {
 
 		else if (sw_rollOverPassRight.triggered()) {
 			game.addScore(wheel.getPoints());
-			sound.play(BELL_LOW);
+			sound.play(CHIME_MED);
 			if (abController.isSetA() && abController.isSetB())
 				replayGate.activate();
 		}
 
 		else if (sw_rollOverPassLeft.triggered()) {
 			game.addScore(wheel.getPoints());
-			sound.play(BELL_LOW);
+			sound.play(CHIME_MED);
 		}
 
 		// EXIT CURRENT STATE BELOW HERE
@@ -611,6 +618,7 @@ void loop() {
 			if (--sw_count == 0) {
 				game.lostBall(); //STATE: NEW_HISCORE_GAMEOVER || NEW_HISCORE_NEXT_PLAYER ||GAME_OVER || PLAYER_UP
 				post.postDown();
+				sound.play(BELL_LOW);
 				sw_count = 500;
 			}
 		} else {
@@ -620,6 +628,8 @@ void loop() {
 	} else if (game.getState() == TILT) {
 		palm.stopAnimation();
 		tilt.deactivate();
+		dispGame.setFunction(SHOW_TILT);
+		dispScore.setFunction(SHOW_TILT);
 		dumbLeds.changeColors(RED);
 
 		//important ball doesn't end up hanging in a kickout forever

@@ -70,9 +70,9 @@ void WheelController::pause(){
 	if(boat->areAllOn()){
 		led10x->on();
 		game->setMultiplier(10);
-		if(currentLed == 0){
-			game->setReplay();
-		}
+	}
+	if(currentLed == 0){
+		game->setReplay();
 	}
 
 }

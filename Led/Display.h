@@ -20,6 +20,7 @@
 #define SHOW_HISCORE_PLAYER 8
 #define SHOW_NEXT_UP 9
 #define SHOW_LOOP_TIME 10
+#define SHOW_TILT 11
 
 
 #include "Arduino.h"
@@ -38,6 +39,14 @@ class Display : public TM1637Display {
 
 public:
 	const uint8_t SEG_OFF[4] = {0,0,0,0	};
+
+
+	const uint8_t SEG_TILT[4] = {
+		SEG_F | SEG_G | SEG_E | SEG_D  ,   			     // t
+		SEG_F | SEG_E ,           						// I
+		SEG_F | SEG_E | SEG_D , 		 				// L
+		SEG_F | SEG_G | SEG_E | SEG_D   				// t
+	};
 
 	const uint8_t SEG_PLAYER_UP_A[1] = {
 		SEG_A | SEG_F | SEG_B | SEG_G | SEG_E | SEG_DP    	// P.
@@ -87,6 +96,7 @@ public:
 		SEG_G | SEG_E | SEG_D | SEG_C ,  				// o
 		SEG_E | SEG_G | SEG_DP        					// r.
 	};
+
 
 	Display(uint8_t pinClk, uint8_t pinDIO);
 	void refreshDisplay();

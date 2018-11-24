@@ -5,7 +5,7 @@
  *      Author: dennis
  */
 
-#include "Sound.h"
+#include "../Sound/Sound.h"
 
 Sound::Sound() {
 

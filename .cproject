@@ -151,7 +151,7 @@
                     					
                     <sourceEntries>
                         						
-                        <entry excluding="Game|Led|Controller|Logic|Power|mechanical|libraries/TM1637/docs|libraries/DFRobotDFPlayerMini-1.0.3/doc|libraries/?*/**/?xamples/**|libraries/?*/**/?xtras/**|libraries/?*/**/test*/**|libraries/?*/**/third-party/**|libraries/**/._*|libraries/?*/utility/*/*" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+                        <entry excluding="Sound|Game|Led|Controller|Logic|Power|mechanical|libraries/TM1637/docs|libraries/DFRobotDFPlayerMini-1.0.3/doc|libraries/?*/**/?xamples/**|libraries/?*/**/?xtras/**|libraries/?*/**/test*/**|libraries/?*/**/third-party/**|libraries/**/._*|libraries/?*/utility/*/*" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Controller"/>
                         						
@@ -162,6 +162,8 @@
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Logic"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Power"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Sound"/>
                         					
                     </sourceEntries>
                     				
