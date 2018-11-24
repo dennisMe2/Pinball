@@ -9,20 +9,22 @@
 
 Switch::Switch() :
 		PortUser() {
-	activeLow = true;
-	trig = false;
-	previousStatus = true;
+	init();
 }
 
 Switch::Switch(uint8_t polarity) :
 		PortUser() {
-	activeLow = true;
-	trig = false;
-	previousStatus = true;
-
+	init();
 	if (polarity == HIGH) {
 		activeLow = false;
 	}
+}
+
+void Switch::init(){
+	activeLow = true;
+	trig = false;
+	previousStatus = true;
+	isTransient = true;
 }
 
 bool Switch::on() {
@@ -33,9 +35,14 @@ bool Switch::on() {
 }
 
 void Switch::setStatus(uint8_t stat) {
+	if( isTransient){
+			isTransient = false;
+			return;
+	}
+
 	if (stat == previousStatus) return;
 
-	if (--transientDelay == 0 && ((intMillis() - lastChangeTime) > 50) ) {
+	if ((intMillis() - lastChangeTime) > 20) {
 
 		PortUser::setStatus(stat);
 		lastChangeTime = intMillis();
@@ -47,7 +54,7 @@ void Switch::setStatus(uint8_t stat) {
 		if (!activeLow && (stat == HIGH))
 			trig = true;
 
-		transientDelay = TRANSIENT_DELAY;
+		isTransient = true;
 	}
 }
 

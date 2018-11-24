@@ -12,20 +12,35 @@ Sound::Sound() {
 }
 
 void Sound::play(uint8_t number) {
-	playFolder(1, number);
+	if (lastSound == number)
+			return;
+
+		//dfpExecute(0x0F, folder, number);
+		if(++commandPtr > 8) commandPtr = 8; //overwrite last to not reverse order as a ring buffer would
+		commands[commandPtr] = number;
+
+		if (isRepeatable(number)) {
+			lastSound = 0;
+		} else {
+			lastSound = number;
+		}
 }
 
 void Sound::begin(Stream &stream) {
 	mySerial = &stream;
-	while (mySerial->available() < 10) // Wait until initialization parameters are received (10 bytes)
-		delay(30);            // have >20ms delays between commands
+	delay(100);
 	dfpExecute(0x06, 0x00, 0x30); // set volume DL=0x00-0x30, default=0x30
-//	delay(30);
-//	dfpExecute(0x4A, 0x00, 0x00); //mysterious "Keep on" command!
+	currentVolume = 0x30;
 }
 
 void Sound::volume(uint8_t vol) {
-	dfpExecute(0x06, 0x00, vol);
+	if (vol == currentVolume) return;
+
+	//dfpExecute(0x06, 0x00, vol);
+	if(++commandPtr > 8) commandPtr = 8; //overwrite last to not reverse order as a ring buffer would
+	commands[commandPtr] = -vol;
+
+	currentVolume = vol;
 }
 
 bool Sound::isRepeatable(uint8_t number) {
@@ -34,26 +49,29 @@ bool Sound::isRepeatable(uint8_t number) {
 			|| number == SOUND_COIN_IN);
 }
 
-void Sound::playFolder(uint8_t folder, uint8_t number) {
-	if (lastSound == number)
-		return;
+void Sound::processCommands(){
+	bool commandExecuted = false;
 
-	dfpExecute(0x0F, folder, number);
+	if (commandPtr == -1) return;
 
-	if (isRepeatable(number)) {
-		lastSound = 0;
-	} else {
-		lastSound = number;
+	if (commands[commandPtr] < 0){
+		commandExecuted = dfpExecute(0x06, 0x00, -commands[commandPtr]);
+	} else{
+		commandExecuted = dfpExecute(0x0F, 0x01, commands[commandPtr]);
 	}
+	if (commandExecuted) commandPtr--;
 }
 
-//http://markus-wobisch.blogspot.com/2016/09/arduino-sounds-dfplayer.html
-void Sound::dfpExecute(uint8_t CMD, uint8_t Par1, uint8_t Par2) {
+//based on: http://markus-wobisch.blogspot.com/2016/09/arduino-sounds-dfplayer.html
+bool Sound::dfpExecute(uint8_t CMD, uint8_t Par1, uint8_t Par2) {
 # define Start_Byte   0x7E
 # define Version_Byte  0xFF
 # define Command_Length 0x06
 # define Acknowledge  0x00
 # define End_Byte    0xEF
+
+	//wait 20 milliseconds between commands to prevent spontaneous resets of the mp3 module
+	if(intMillis() - lastCommandTime < 20) return false;
 
 	// Calculate the checksum (2 bytes)
 	uint16_t checksum = -(Version_Byte + Command_Length + CMD + Acknowledge
@@ -66,4 +84,6 @@ void Sound::dfpExecute(uint8_t CMD, uint8_t Par1, uint8_t Par2) {
 
 	// Send the command line to DFPlayer
 	mySerial->write(Command_line, 10);
+	lastCommandTime = intMillis();
+	return true;
 }

@@ -19,19 +19,24 @@
 #ifndef SOUND_H_
 #define SOUND_H_
 #include <Arduino.h>
+#include "../Utils.h"
 
 class Sound {
 public:
 	Sound();
-	void playFolder(uint8_t folder, uint8_t number);
 	void play(uint8_t number);
 	void begin(Stream &stream);
 	void volume(uint8_t vol);
+	void processCommands();
 private:
+	int8_t commands[9] = {0,0,0,0,0,0,0,0,0};// negative is volume, positive = sound nr [1..127] in folder 001
+	int8_t commandPtr = -1; //-1 == no commands
 	uint8_t lastSound = 0;
+	uint8_t currentVolume = 0;
 	Stream* mySerial = 0;
-	void dfpExecute(uint8_t CMD, uint8_t Par1, uint8_t Par2);
+	bool dfpExecute(uint8_t CMD, uint8_t Par1, uint8_t Par2);
 	bool isRepeatable(uint8_t number);
+	unsigned int lastCommandTime = 0;
 };
 
 #endif /* SOUND_H_ */

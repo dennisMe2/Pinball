@@ -395,6 +395,7 @@ void loop() {
 		game.resetPlayers();
 		palm.setDelay(300); //fast animation
 		palm.startAnimation();
+		sound.volume(0x18);
 		sound.play(AMBIENT_BOAT);
 
 		wheel.setDelay(150);
@@ -406,6 +407,7 @@ void loop() {
 		// EXIT CURRENT STATE BELOW HERE
 		//adding a coin adds a player; max = 4 once a game starts no players can be added
 		if (sw_coinIn.triggered()) {
+			sound.volume(0x30);
 			dispScore.setFunction(SHOW_NEXT_UP);
 			ballChute.activate();
 			ballLaunched = loopTime;
@@ -448,6 +450,7 @@ void loop() {
 		dumbLeds.changeColors(GREEN);
 		dispGame.setFunction(SHOW_PLAYER);
 		dispScore.setFunction(SHOW_NEXT_UP);
+		sound.volume(0x18);
 		sound.play(AMBIENT_WAVES);
 
 		// EXIT CURRENT STATE BELOW HERE
@@ -461,6 +464,7 @@ void loop() {
 		wheel.reset();
 		boat.allOff();
 		palm.ledsOff();
+		sound.volume(30);
 		dumbLeds.changeColors(MAGENTA);
 		if (sw_ballChute.triggered())
 			ballChute.activate();
@@ -605,7 +609,7 @@ void loop() {
 		//so we handle it differently because response time is not important here
 		if (!sw_ballChute.getStatus()) {
 			if (--sw_count == 0) {
-				game.lostBall(); //STATE: NEW_HISCORE_GAMEOVER || NEW_HISCORE_NEXT_PLAYER ||GAME_OVER
+				game.lostBall(); //STATE: NEW_HISCORE_GAMEOVER || NEW_HISCORE_NEXT_PLAYER ||GAME_OVER || PLAYER_UP
 				post.postDown();
 				sw_count = 500;
 			}
@@ -658,6 +662,8 @@ void loop() {
 
 	palm.animate();
 	wheel.animate();
+
+	sound.processCommands();
 
 	// end of cycle tasks, refreshing i/o and displays etc
 	driverBank.refreshOutputs();
