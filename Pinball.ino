@@ -1,6 +1,5 @@
 #include <Adafruit_NeoPixel.h>
 #include <Arduino.h>
-#include <HardwareSerial.h>
 #include <stdint.h>
 #include <SoftwareSerial.h>
 #include <SPI.h>
@@ -27,17 +26,18 @@
 #include "Utils.h"
 
 
-#define LED_PIN 6
-
 #define CLK1 2
 #define DIO1 3
 #define CLK2 4
 #define DIO2 5
+#define LED_PIN 6
+
 
 #define CSportExpander 10
 
-//uint8_t litPixel = 0;
-unsigned int sw_count = 500;
+unsigned int delayCounter = 500;
+uint8_t testPowerFETCounter = 0;
+unsigned long nextActivationTime = 0;
 
 SoftwareSerial softSerial(7, 8); // arduino RX, TX
 
@@ -53,9 +53,6 @@ Player player3 = Player();
 Player player4 = Player();
 
 Game game = Game(3, &player1, &player2, &player3, &player4);
-
-unsigned long nextLedUpdate = 0;
-uint8_t ledUpdateDelay = 100;
 
 PortExpander driverBank = PortExpander(&SPI, CSportExpander, 0);
 PortExpander switchBank1 = PortExpander(&SPI, CSportExpander, 1);
@@ -144,15 +141,15 @@ Switch sw_ballRelease = Switch();
 Switch sw_ballChute = Switch();
 Switch sw_coinIn = Switch();
 
-DelayedKickOut kickOutTop = DelayedKickOut(3500, 13);
+DelayedKickOut kickOutTop = DelayedKickOut(3500, 12);
 Solenoid kickerTopLeft = Solenoid();
 Solenoid kickerTopRight = Solenoid();
 Solenoid kickerBottomLeft = Solenoid();
 Solenoid kickerBottomRight = Solenoid();
-DelayedKickOut kickOutLeft = DelayedKickOut(7000, 17);
-DelayedKickOut kickOutRight = DelayedKickOut(7000, 17);
+DelayedKickOut kickOutLeft = DelayedKickOut(7000, 12);
+DelayedKickOut kickOutRight = DelayedKickOut(7000, 12);
 Solenoid postUp = Solenoid(100);
-Solenoid postDown = Solenoid(10);
+Solenoid postDown = Solenoid(15);
 Solenoid replayGate = Solenoid(255);
 Solenoid ballChute = Solenoid();
 Solenoid knocker = Solenoid();
@@ -167,8 +164,7 @@ PostController post = PostController(&postUpper, &postLower, &postUp,
 MechSound mechSound = MechSound(&knocker);
 
 void setup() {
-	Serial.begin(9600);
-	randomSeed(analogRead(0));
+	randomSeed(analogRead(1));
 
 	dumbLeds.addLed(&islandRight);
 	dumbLeds.addLed(&topRightSideUpper);
@@ -286,20 +282,11 @@ void setup() {
 	dispGame.setGame(&game);
 
 	tilt.activate();
-	Serial.println(F("End Of Boot phase"));
-	delay(100);  //prime switch debounce counters;
+	delay(250);  //prime switch debounce counters;
 
 	pinMode((unsigned char) A0, OUTPUT);
 	digitalWrite((unsigned char) A0, LOW);
 }
-
-bool testMode = false;
-int testModeCounter = 0;
-
-uint8_t testCounter = 0;
-int swTestCtr = 2000;
-
-unsigned long nextActivationTime = 0;
 
 
 void addPlayer() {
@@ -318,7 +305,9 @@ unsigned char getPulse() {
 }
 
 void loop() {
-	static unsigned long loopTime, ballLaunched;
+	uint8_t ledUpdateDelay = 100;
+	static uint8_t testCtr;
+	static unsigned long nextLedUpdate, loopTime, ballLaunched;
 
 	digitalWrite((unsigned char) A0, getPulse()); //used to measure the actual loop timings using a scope
 	loopTime = millis();
@@ -329,16 +318,13 @@ void loop() {
 
 	if ((game.getState() == RESET)) {
 		dumbLeds.changeColors(CYAN);
-		if (!sw_coinIn.getStatus()) {
-			game.resetHighScore();
-		}
 
 		// EXIT CURRENT STATE BELOW HERE
 		game.setState(LOCATE_BALL);
 
 	} else if ((game.getState() == LOCATE_BALL) || game.getState() == TEST_MODE) {
 		if ((loopTime - nextActivationTime) > 500) {
-			switch (testCounter) {
+			switch (testPowerFETCounter) {
 			case 0:
 				post.postDown();
 				kickOutTop.activateImmediate();
@@ -380,25 +366,29 @@ void loop() {
 			case 12:			//you may want to hold a flipper for this one!
 				tilt.activate();
 				break;
+
 			}
 			// EXIT CURRENT STATE BELOW HERE
-			if (game.getState() == LOCATE_BALL && ++testCounter > 12) {
-				testCounter = 0;
+			if (game.getState() == LOCATE_BALL && testPowerFETCounter == 13) {
+				testPowerFETCounter = 0;
 				game.setState(GAME_OVER);
-			}
-
-			if (!sw_coinIn.getStatus()) {
-				if (--swTestCtr == 0) {
-					game.setState(GAME_OVER);
-					swTestCtr = 2000;
+				if (!sw_coinIn.getStatus()) {
+					game.resetHighScore();
 				}
-			} else {
-				swTestCtr = 2000;
+			}
+			//enter test mode
+			if (!sw_coinIn.getStatus()) {
+				if(++testCtr >= 10){
+					testCtr = 0;
+					game.setState(GAME_OVER);
+				}
+			} else{
+				testCtr = 0;
 			}
 
+			if (++testPowerFETCounter >13) testPowerFETCounter = 0;
 			nextActivationTime = loopTime;
 		}
-
 	} else if (game.getState() == GAME_OVER) {
 		dumbLeds.changeColors(BLUE);
 		game.resetPlayers();
@@ -422,23 +412,22 @@ void loop() {
 			ballLaunched = loopTime;
 			game.setState(COIN_IN);
 			addPlayer();
-		}
-		if (!sw_coinIn.getStatus()) {
-			if (--swTestCtr == 0) {
-				game.setState(TEST_MODE);
-				swTestCtr = 2000;
-			}
-		} else {
-			swTestCtr = 2000;
-		}
 
+		}
 	} else if (game.getState() == COIN_IN) {
 		dumbLeds.changeColors(YELLOW);
 		dispGame.setFunction(SHOW_PLAYER);
 		dispScore.setFunction(SHOW_NUM_PLAYERS);
 
 		if (sw_coinIn.triggered()) {
-			addPlayer();
+			if(game.getNumPlayers() < 4 ){
+				addPlayer();
+			}else{
+				if(++testCtr >= 10){
+					testCtr = 0;
+					game.setState(TEST_MODE);
+				}
+			}
 		}
 
 		if (!sw_ballChute.getStatus()) {
@@ -628,14 +617,20 @@ void loop() {
 		// this long switch wire is prone to picking up spikes which abruptly end a game,
 		//so we handle it differently because response time is not important here
 		if (!sw_ballChute.getStatus()) {
-			if (--sw_count == 0) {
-				game.lostBall(); //STATE: NEW_HISCORE_GAMEOVER || NEW_HISCORE_NEXT_PLAYER ||GAME_OVER || PLAYER_UP
+			if (--delayCounter == 0) {
 				post.postDown();
 				sound.play(BELL_LOW);
-				sw_count = 500;
+				delayCounter = 1500;
+				game.setState(PLAYER_LOST_BALL);
 			}
 		} else {
-			sw_count = 500;
+			delayCounter = 500;
+		}
+
+	} else if (game.getState() == PLAYER_LOST_BALL){ //transient state
+		if (--delayCounter == 0) {
+			game.lostBall(); //STATE: NEW_HISCORE_GAMEOVER || NEW_HISCORE_NEXT_PLAYER ||GAME_OVER || PLAYER_UP
+			delayCounter = 500;
 		}
 
 	} else if (game.getState() == TILT) {
@@ -698,7 +693,7 @@ void loop() {
 		nextLedUpdate = loopTime + ledUpdateDelay;
 	}
 
-	if (!testMode) {
+	if (!(game.getState() == TEST_MODE)) {
 		dispScore.refreshDisplay();
 		dispGame.refreshDisplay();
 	} else {

@@ -33,14 +33,14 @@ void MechSound::updateSound(){
 	switch (task){
 	case TASK_RATTLE:
 		if(millis() % 100 == 0){
-			solenoid->maxOnTime = 2;
+			solenoid->maxOnTime = 1;
 			solenoid->activate();
 			if(--rattleCounter == 0) stop();
 		}
 		break;
 	case TASK_KNOCK:
 		if(millis() % 300 == 0){
-			solenoid->maxOnTime = 10;
+			solenoid->maxOnTime = 20;
 			solenoid->activate();
 			if(--rattleCounter == 0) stop();
 		}

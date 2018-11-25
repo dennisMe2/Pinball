@@ -31,6 +31,7 @@ void Game::setMultiplier(uint8_t multi) {
 
 void Game::resetHighScore() {
 	EEPROM.put(0,(unsigned int) 0);
+	hiScore = 0;
 }
 
 uint8_t Game::getState(){
@@ -60,7 +61,7 @@ void Game::update(){
 
 void Game::addScore(uint8_t points) {
 
-	mechSound->rattle(points * multiplier);
+	mechSound->rattle(points);
 
 	players[activePlayer]->score += points * multiplier;
 
