@@ -311,7 +311,7 @@ unsigned char getPulse() {
 }
 
 void loop() {
-	uint8_t ledUpdateDelay = 10;
+	uint8_t ledUpdateDelay = 20;
 	static uint8_t testCtr;
 	static unsigned long nextLedUpdate, loopTime, ballLaunched;
 
@@ -626,7 +626,7 @@ void loop() {
 			if (--delayCounter == 0) {
 				post.postDown();
 				sound.play(BELL_LOW);
-				delayCounter = 2500;
+				delayCounter = 500;
 				game.setState(PLAYER_LOST_BALL);
 			}
 		} else {
