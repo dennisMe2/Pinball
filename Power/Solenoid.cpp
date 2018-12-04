@@ -21,6 +21,8 @@ Solenoid::Solenoid(uint8_t tMaxOn) : PortUser(){
 }
 
 void Solenoid::activate(){
+	if(this->getStatus() == HIGH) return;
+
 	this->setStatus(HIGH);
 
 	if (maxOnTime == 0){

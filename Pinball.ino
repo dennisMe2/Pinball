@@ -22,6 +22,7 @@
 #include "Logic/Switch.h"
 #include "Sound/MechSound.h"
 #include "Power/DelayedKickOut.h"
+#include "Power/Kicker.h"
 #include "Sound/Sound.h"
 #include "Utils.h"
 
@@ -142,10 +143,10 @@ Switch sw_ballChute = Switch();
 Switch sw_coinIn = Switch();
 
 DelayedKickOut kickOutTop = DelayedKickOut(3500, 12);
-Solenoid kickerTopLeft = Solenoid();
-Solenoid kickerTopRight = Solenoid();
-Solenoid kickerBottomLeft = Solenoid();
-Solenoid kickerBottomRight = Solenoid();
+Kicker kickerTopLeft = Kicker();
+Kicker kickerTopRight = Kicker();
+Kicker kickerBottomLeft = Kicker();
+Kicker kickerBottomRight = Kicker();
 DelayedKickOut kickOutLeft = DelayedKickOut(7000, 12);
 DelayedKickOut kickOutRight = DelayedKickOut(7000, 12);
 Solenoid postUp = Solenoid(100);
@@ -157,14 +158,19 @@ Solenoid tilt = Solenoid(0); // normally on!
 
 BoatController boat = BoatController(&yellow, &green, &blue, &red);
 WheelController wheel = WheelController(&boat);
-ABController abController = ABController(&a, &b, &topLeftKicker,
-		&topRightKicker, &bottomLeftKicker, &bottomRightKicker);
+ABController abController = ABController(&a, &b, &kickerTopLeft,
+		&kickerTopRight, &kickerBottomLeft, &kickerBottomRight);
 PostController post = PostController(&postUpper, &postLower, &postUp,
 		&postDown);
 MechSound mechSound = MechSound(&knocker);
 
 void setup() {
 	randomSeed(analogRead(1));
+
+	kickerTopLeft.setLed(&topLeftKicker);
+	kickerTopRight.setLed(&topRightKicker);
+	kickerBottomLeft.setLed(&bottomLeftKicker);
+	kickerBottomRight.setLed(&bottomRightKicker);
 
 	dumbLeds.addLed(&islandRight);
 	dumbLeds.addLed(&topRightSideUpper);
@@ -305,7 +311,7 @@ unsigned char getPulse() {
 }
 
 void loop() {
-	uint8_t ledUpdateDelay = 100;
+	uint8_t ledUpdateDelay = 10;
 	static uint8_t testCtr;
 	static unsigned long nextLedUpdate, loopTime, ballLaunched;
 
@@ -620,7 +626,7 @@ void loop() {
 			if (--delayCounter == 0) {
 				post.postDown();
 				sound.play(BELL_LOW);
-				delayCounter = 1500;
+				delayCounter = 2500;
 				game.setState(PLAYER_LOST_BALL);
 			}
 		} else {

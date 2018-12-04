@@ -8,12 +8,12 @@
 #ifndef ABCONTROLLER_H_
 #define ABCONTROLLER_H_
 
-#include "../Led/BasicLed.h"
+#include "../Power/Kicker.h"
 #include "../Utils.h"
 
 class ABController {
 public:
-	ABController(BasicLed* a, BasicLed* b, BasicLed* tl, BasicLed* tr, BasicLed* bl, BasicLed* br);
+	ABController(BasicLed* a, BasicLed* b, Kicker* tl, Kicker* tr, Kicker* bl, Kicker* br);
 	void setA();
 	void resetA();
 	void setB();
@@ -24,10 +24,10 @@ public:
 private:
 	BasicLed* a;
 	BasicLed* b;
-	BasicLed* tl;
-	BasicLed* tr;
-	BasicLed* bl;
-	BasicLed* br;
+	Kicker* tl;
+	Kicker* tr;
+	Kicker* bl;
+	Kicker* br;
 	bool isSetLedA:1;
 	bool isSetLedB:1;
 };

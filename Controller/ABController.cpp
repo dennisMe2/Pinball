@@ -7,7 +7,7 @@
 
 #include "ABController.h"
 
-ABController::ABController(BasicLed* a, BasicLed* b, BasicLed* tl, BasicLed* tr, BasicLed* bl, BasicLed* br) {
+ABController::ABController(BasicLed* a, BasicLed* b, Kicker* tl, Kicker* tr, Kicker* bl, Kicker* br) {
 	this->a = a;
 	this->b = b;
 	this->tl = tl;
