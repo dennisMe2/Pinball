@@ -42,7 +42,7 @@ void Switch::setStatus(uint8_t stat) {
 
 	if (stat == previousStatus) return;
 
-	if ((intMillis() - lastChangeTime) > 20) {
+	if ((intMillis() - lastChangeTime) > 60) {
 
 		PortUser::setStatus(stat);
 		lastChangeTime = intMillis();

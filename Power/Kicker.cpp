@@ -7,8 +7,9 @@
 
 #include "Kicker.h"
 
-Kicker::Kicker() : Solenoid(){
+Kicker::Kicker(unsigned long* kickerActiveTime) : Solenoid(){
 	Solenoid::maxOnTime = 50;
+	this->kickerActivatedTime = kickerActiveTime;
 }
 
 void Kicker::setLed(BasicLed* led){
@@ -23,6 +24,9 @@ void Kicker::setColor(uint8_t r, uint8_t g, uint8_t b){
 }
 
 void Kicker::activate(){
+	if ((millis() - *kickerActivatedTime) < 60 ) return;
+
+	*kickerActivatedTime = millis();
 	Solenoid::activate();
 	led->setColor(BLUE);
 }

@@ -26,19 +26,18 @@
 #include "Sound/Sound.h"
 #include "Utils.h"
 
-
 #define CLK1 2
 #define DIO1 3
 #define CLK2 4
 #define DIO2 5
 #define LED_PIN 6
 
-
 #define CSportExpander 10
 
-unsigned int delayCounter = 500;
+unsigned int delayCounter = 2000;
 uint8_t testPowerFETCounter = 0;
 unsigned long nextActivationTime = 0;
+unsigned long kickerActiveTime = 0;
 
 SoftwareSerial softSerial(7, 8); // arduino RX, TX
 
@@ -57,7 +56,7 @@ Game game = Game(3, &player1, &player2, &player3, &player4);
 
 PortExpander driverBank = PortExpander(&SPI, CSportExpander, 0);
 PortExpander switchBank1 = PortExpander(&SPI, CSportExpander, 1);
-PortExpander switchBank2 = PortExpander(&SPI, CSportExpander, 3);
+PortExpander switchBank2 = PortExpander(&SPI, CSportExpander, 3); //should have been 2. pulled down wrong wire
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(44, LED_PIN,
 NEO_RGB + NEO_KHZ800);
@@ -143,14 +142,14 @@ Switch sw_ballChute = Switch();
 Switch sw_coinIn = Switch();
 
 DelayedKickOut kickOutTop = DelayedKickOut(3500, 12);
-Kicker kickerTopLeft = Kicker();
-Kicker kickerTopRight = Kicker();
-Kicker kickerBottomLeft = Kicker();
-Kicker kickerBottomRight = Kicker();
+Kicker kickerTopLeft = Kicker(&kickerActiveTime);
+Kicker kickerTopRight = Kicker(&kickerActiveTime);
+Kicker kickerBottomLeft = Kicker(&kickerActiveTime);
+Kicker kickerBottomRight = Kicker(&kickerActiveTime);
 DelayedKickOut kickOutLeft = DelayedKickOut(7000, 12);
 DelayedKickOut kickOutRight = DelayedKickOut(7000, 12);
 Solenoid postUp = Solenoid(100);
-Solenoid postDown = Solenoid(15);
+Solenoid postDown = Solenoid(30);
 Solenoid replayGate = Solenoid(255);
 Solenoid ballChute = Solenoid();
 Solenoid knocker = Solenoid();
@@ -294,12 +293,10 @@ void setup() {
 	digitalWrite((unsigned char) A0, LOW);
 }
 
-
 void addPlayer() {
 	game.addPlayer();
 	sound.play(SOUND_COIN_IN);
 }
-
 
 unsigned char getPulse() {
 	static bool pinHigh = false;
@@ -384,15 +381,16 @@ void loop() {
 			}
 			//enter test mode
 			if (!sw_coinIn.getStatus()) {
-				if(++testCtr >= 10){
+				if (++testCtr >= 10) {
 					testCtr = 0;
 					game.setState(GAME_OVER);
 				}
-			} else{
+			} else {
 				testCtr = 0;
 			}
 
-			if (++testPowerFETCounter >13) testPowerFETCounter = 0;
+			if (++testPowerFETCounter > 13)
+				testPowerFETCounter = 0;
 			nextActivationTime = loopTime;
 		}
 	} else if (game.getState() == GAME_OVER) {
@@ -426,10 +424,10 @@ void loop() {
 		dispScore.setFunction(SHOW_NUM_PLAYERS);
 
 		if (sw_coinIn.triggered()) {
-			if(game.getNumPlayers() < 4 ){
+			if (game.getNumPlayers() < 4) {
 				addPlayer();
-			}else{
-				if(++testCtr >= 10){
+			} else {
+				if (++testCtr >= 10) {
 					testCtr = 0;
 					game.setState(TEST_MODE);
 				}
@@ -561,31 +559,31 @@ void loop() {
 		}
 
 		else if (sw_kickerTopLeft.triggered()) {
+			kickerTopLeft.activate();
 			sound.play(CHIME_LOW);
 			game.addScore(
 					palm.getMultiplier() * (abController.isSetB()) ? 10 : 1);
-			kickerTopLeft.activate();
 		}
 
 		else if (sw_kickerTopRight.triggered()) {
-			sound.play(CHIME_LOW);
 			kickerTopRight.activate();
+			sound.play(CHIME_LOW);
 			game.addScore(
 					palm.getMultiplier() * (abController.isSetA()) ? 10 : 1);
 		}
 
 		else if (sw_kickerBottomRight.triggered()) {
+			kickerBottomRight.activate();
 			sound.play(CHIME_LOW);
 			game.addScore(
 					palm.getMultiplier() * (abController.isSetB()) ? 10 : 1);
-			kickerBottomRight.activate();
 		}
 
 		else if (sw_kickerBottomLeft.triggered()) {
+			kickerBottomLeft.activate();
 			sound.play(CHIME_LOW);
 			game.addScore(
 					palm.getMultiplier() * (abController.isSetA()) ? 10 : 1);
-			kickerBottomLeft.activate();
 		}
 
 		else if (sw_kickOutLeft.triggered() && !kickOutLeft.isInUse()) {
@@ -626,17 +624,17 @@ void loop() {
 			if (--delayCounter == 0) {
 				post.postDown();
 				sound.play(BELL_LOW);
-				delayCounter = 500;
+				delayCounter = 2500; //set delay for death bell to sound out
 				game.setState(PLAYER_LOST_BALL);
 			}
 		} else {
-			delayCounter = 500;
+			delayCounter = 500; //(re)set delay for ball chute detector, prevents sudden death syndrome.
 		}
 
-	} else if (game.getState() == PLAYER_LOST_BALL){ //transient state
+	} else if (game.getState() == PLAYER_LOST_BALL) { //transient state
 		if (--delayCounter == 0) {
 			game.lostBall(); //STATE: NEW_HISCORE_GAMEOVER || NEW_HISCORE_NEXT_PLAYER ||GAME_OVER || PLAYER_UP
-			delayCounter = 500;
+			delayCounter = 2000;
 		}
 
 	} else if (game.getState() == TILT) {

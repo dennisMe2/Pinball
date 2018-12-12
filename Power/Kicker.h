@@ -14,7 +14,7 @@
 
 class Kicker: public Solenoid {
 public:
-	Kicker();
+	Kicker(unsigned long* kickerActiveTime);
 	void setLed(BasicLed* led);
 	virtual void activate();
 	virtual void deactivate();
@@ -22,6 +22,7 @@ public:
 private:
 	BasicLed* led = 0;
 	uint8_t color[3] = {0,0,0};
+	unsigned long* kickerActivatedTime = 0;
 };
 
 

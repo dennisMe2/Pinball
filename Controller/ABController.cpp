@@ -26,7 +26,7 @@ void ABController::setA(){
 }
 
 void ABController::resetA(){
-	a->setColor(GLOW_B);
+	a->setColor(BLACK);
 	tr->setColor(GLOW_B);
 	bl->setColor(GLOW_B);
 	isSetLedA = false;
@@ -40,7 +40,7 @@ void ABController::setB(){
 }
 
 void ABController::resetB(){
-	b->setColor(GLOW_B);
+	b->setColor(BLACK);
 	tl->setColor(GLOW_B);
 	br->setColor(GLOW_B);
 	isSetLedB = false;
@@ -55,8 +55,8 @@ bool ABController::isSetB(){
 }
 
 void ABController::reset(){
-		this->a->setColor(GLOW_B);
-		this->b->setColor(GLOW_B);
+		this->a->setColor(BLACK);
+		this->b->setColor(BLACK);
 		this->tl->setColor(GLOW_B);
 		this->tr->setColor(GLOW_B);
 		this->bl->setColor(GLOW_B);
