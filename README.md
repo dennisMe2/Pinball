@@ -12,3 +12,6 @@ If it inspires you how not to do something please let me know ;-)
 If you want to build something like it and want some advice, drop me a line, I may have a few tips.
 
 Hardware is licenced CERN-OHL and software is GPL3 or any later GPL licence at your convenience even if individual files are not marked this licencing still applies.
+
+Here's a short game play sample:
+https://www.youtube.com/watch?v=MmFvsb0JEFA
