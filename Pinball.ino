@@ -140,6 +140,8 @@ Switch sw_rollOverPassRight = Switch();
 Switch sw_ballRelease = Switch();
 Switch sw_ballChute = Switch();
 Switch sw_coinIn = Switch();
+Switch sw_rightKick = Switch();
+Switch sw_leftKick = Switch();
 
 DelayedKickOut kickOutTop = DelayedKickOut(3500, 12);
 Kicker kickerTopLeft = Kicker(&kickerActiveTime);
@@ -257,6 +259,8 @@ void setup() {
 	switchBank2.addSwitch(&sw_ballRelease, 9);
 	switchBank2.addSwitch(&sw_ballChute, 10);
 	switchBank2.addSwitch(&sw_coinIn, 11);
+	switchBank2.addSwitch(&sw_leftKick, 12);
+	switchBank2.addSwitch(&sw_rightKick, 13);
 	switchBank2.begin();
 
 	kickOutTop.setMechSound(&mechSound);
@@ -545,7 +549,9 @@ void loop() {
 		else if (sw_islandLeftTop.triggered() || sw_islandLeftBottom.triggered()
 				|| sw_islandRightTop.triggered()
 				|| sw_islandRightBottom.triggered() || sw_sideLeft.triggered()
-				|| sw_sideRight.triggered()) {
+				|| sw_sideRight.triggered()
+				|| sw_leftKick.triggered() || sw_rightKick.triggered()
+				) {
 			game.addScore(1);
 			mechSound.rattle(3);
 			post.postDown();
