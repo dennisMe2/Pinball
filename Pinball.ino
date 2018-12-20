@@ -38,6 +38,7 @@ unsigned int delayCounter = 2000;
 uint8_t testPowerFETCounter = 0;
 unsigned long nextActivationTime = 0;
 unsigned long kickerActiveTime = 0;
+bool blockSlowActions = false;
 
 SoftwareSerial softSerial(7, 8); // arduino RX, TX
 
@@ -143,13 +144,13 @@ Switch sw_coinIn = Switch();
 Switch sw_rightKick = Switch();
 Switch sw_leftKick = Switch();
 
-DelayedKickOut kickOutTop = DelayedKickOut(3500, 12);
+DelayedKickOut kickOutTop = DelayedKickOut(3500, 12, &blockSlowActions);
 Kicker kickerTopLeft = Kicker(&kickerActiveTime);
 Kicker kickerTopRight = Kicker(&kickerActiveTime);
 Kicker kickerBottomLeft = Kicker(&kickerActiveTime);
 Kicker kickerBottomRight = Kicker(&kickerActiveTime);
-DelayedKickOut kickOutLeft = DelayedKickOut(7000, 12);
-DelayedKickOut kickOutRight = DelayedKickOut(7000, 12);
+DelayedKickOut kickOutLeft = DelayedKickOut(7000, 12, &blockSlowActions);
+DelayedKickOut kickOutRight = DelayedKickOut(7000, 12, &blockSlowActions);
 Solenoid postUp = Solenoid(100);
 Solenoid postDown = Solenoid(30);
 Solenoid replayGate = Solenoid(255);
@@ -550,7 +551,6 @@ void loop() {
 				|| sw_islandRightTop.triggered()
 				|| sw_islandRightBottom.triggered() || sw_sideLeft.triggered()
 				|| sw_sideRight.triggered()
-				|| sw_leftKick.triggered() || sw_rightKick.triggered()
 				) {
 			game.addScore(1);
 			mechSound.rattle(3);
@@ -600,6 +600,12 @@ void loop() {
 		else if (sw_kickOutRight.triggered() && !kickOutRight.isInUse()) {
 			game.addScore(wheel.getPoints());
 			kickOutRight.activate();
+		}
+
+		else if(sw_leftKick.triggered() || sw_rightKick.triggered()){
+			game.addScore(1);
+			mechSound.rattle(3);
+			sound.play(CHIME_HIGH);
 		}
 
 		else if (sw_rollOverPassRight.triggered()) {
@@ -691,24 +697,27 @@ void loop() {
 	palm.animate();
 	wheel.animate();
 
-	sound.processCommands();
-	mechSound.updateSound();
-
 	// end of cycle tasks, refreshing i/o and displays etc
-	driverBank.refreshOutputs();
+	mechSound.updateSound();
+	driverBank.refreshOutputs();//must be done before the slow block
 
-	//don't update the LEDs too quickly to save precious milliseconds
-	if (loopTime > nextLedUpdate) {
-		strip.show();	//Duration  = 1.3 ms!
-		nextLedUpdate = loopTime + ledUpdateDelay;
-	}
+	//slow Actions must be blocked while the kickouts are active to prevent regular megakicks
+	if (!blockSlowActions){
+		sound.processCommands();
 
-	if (!(game.getState() == TEST_MODE)) {
-		dispScore.refreshDisplay();
-		dispGame.refreshDisplay();
-	} else {
-		switchBank1.showPinsOn7Segment(&dispGame);
-		switchBank2.showPinsOn7Segment(&dispScore);
+		//don't update the LEDs too quickly to save precious milliseconds
+		if (loopTime > nextLedUpdate) {
+			strip.show();	//Duration  = 1.3 ms!
+			nextLedUpdate = loopTime + ledUpdateDelay;
+		}
+
+		if (!(game.getState() == TEST_MODE)) {
+			dispScore.refreshDisplay();
+			dispGame.refreshDisplay();
+		} else {
+			switchBank1.showPinsOn7Segment(&dispGame);
+			switchBank2.showPinsOn7Segment(&dispScore);
+		}
 	}
 
 	switchBank1.resetTriggers();

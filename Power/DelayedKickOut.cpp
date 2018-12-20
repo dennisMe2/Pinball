@@ -13,9 +13,10 @@ DelayedKickOut::DelayedKickOut() : Solenoid() {
 
 }
 
-DelayedKickOut::DelayedKickOut(unsigned int delayMaxMs, uint8_t maxActive) : Solenoid() {
+DelayedKickOut::DelayedKickOut(unsigned int delayMaxMs, uint8_t maxActive, bool* blockSlow) : Solenoid() {
 	maxDelay = delayMaxMs;
 	maxOnTime = maxActive;
+	this->blockSlow = blockSlow;
 }
 
 void DelayedKickOut::setWheelController(WheelController* wheelController){
@@ -44,11 +45,17 @@ void DelayedKickOut::activateImmediate(){
 	activationStart = 0;
 	mechSound->stop();
 	Solenoid::activate();
+	*blockSlow = true;
 	if(wheel !=0) wheel->unPause();
 }
 
+void DelayedKickOut::deActivate(){
+	Solenoid::deactivate();
+	*blockSlow = false;
+}
+
  void DelayedKickOut::checkDelayedActivation(){
-	 if((activationStart != 0) && ((signed int)(intMillis() - activationStart) > 0)){
+	 if((isWaitingToFire) && ((signed int)(intMillis() - activationStart) > 0)){
 		 activateImmediate();
 	 }
  };
